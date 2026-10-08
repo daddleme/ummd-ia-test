@@ -5,7 +5,7 @@ import { parseRoute, buildHash, parseQuery, buildQuery } from "./router.js";
 import { searchPages } from "./search.js";
 import { content } from "./content.js";
 import { emptyLog, record, fileName, serialize } from "./log.js";
-import { popupOffset, panelOffset } from "./layout.js";
+import { popupOffset } from "./layout.js";
 
 const KEYS = { log: "ummd-log", version: "ummd-version", lang: "ummd-lang", moderator: "ummd-moderator" };
 
@@ -80,15 +80,19 @@ export function mount(document, window, deps = {}) {
   }
 
   function placeMenus() {
-    const popup = document.querySelector("[data-popup]");
+    const menu = document.querySelector("[data-popup], [data-panel]");
     const anchor = state.openArea ? document.querySelector(`[data-area="${state.openArea}"]`) : null;
-    if (popup && anchor) {
-      const anchorBox = boxOf(anchor);
-      const popupBox = boxOf(popup);
-      popup.style.marginLeft = `${popupOffset(anchorBox.left, popupBox.width || 220, window.innerWidth)}px`;
-    }
-    const panel = document.querySelector("[data-panel]");
-    if (panel) panel.style.marginLeft = `${panelOffset(boxOf(panel).width || 0, window.innerWidth)}px`;
+    const wrap = document.querySelector(".navwrap");
+    if (!menu || !anchor || !wrap) return;
+    menu.style.left = "0px";
+    menu.style.maxWidth = "";
+    const wrapBox = boxOf(wrap);
+    const anchorLeft = boxOf(anchor).left - wrapBox.left;
+    const menuWidth = boxOf(menu).width;
+  const room = (wrapBox.width || window.innerWidth) - 8;
+  const left = Math.max(8, anchorLeft + popupOffset(anchorLeft, menuWidth, room));
+    menu.style.left = `${left}px`;
+    menu.style.maxWidth = `${room - left}px`;
   }
 
   function logVisit() {
@@ -122,8 +126,6 @@ export function mount(document, window, deps = {}) {
       draw();
       return;
     }
-    const lang = event.target.closest("[data-lang]");
-    if (lang) { state.lang = lang.dataset.lang; draw(); return; }
     const area = event.target.closest("[data-area]");
     if (area) { state.openArea = state.openArea === area.dataset.area ? null : area.dataset.area; draw(); return; }
     const page = event.target.closest("[data-page]");
@@ -147,6 +149,12 @@ export function mount(document, window, deps = {}) {
     }
   });
 
+  document.querySelector("#app").addEventListener("change", (event) => {
+    if (!event.target.matches("[data-lang-select]")) return;
+    state.lang = event.target.value === "en" ? "en" : "de";
+    draw();
+  });
+
   document.querySelector("#app").addEventListener("submit", (event) => {
     if (!event.target.matches("[data-search-form]")) return;
     event.preventDefault();
@@ -158,9 +166,12 @@ export function mount(document, window, deps = {}) {
 
   window.addEventListener("keydown", (event) => {
     if (event.key === "M" && event.shiftKey) state.moderatorOpen = !state.moderatorOpen;
+    else if (event.key === "Escape" && state.openArea) state.openArea = null;
     else return;
     draw();
   });
+
+  window.addEventListener("resize", placeMenus);
 
   window.addEventListener("hashchange", () => {
     if (state.writing) return;

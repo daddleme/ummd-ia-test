@@ -61,7 +61,9 @@ test("Suche, Sprache, Marke und Download", () => {
   app.document.querySelector("[data-search]").value = "Fachschaft";
   app.document.querySelector("[data-search-form]").dispatchEvent(new app.window.Event("submit", { bubbles: true, cancelable: true }));
   assert.ok(app.document.querySelector("[data-result='moodle']"));
-  app.document.querySelector("[data-lang='en']").click();
+  const language = app.document.querySelector("[data-lang-select]");
+  language.querySelector("[value=en]").selected = true;
+  language.dispatchEvent(new app.window.Event("change", { bubbles: true }));
   assert.match(app.document.querySelector("[data-result='moodle']").textContent, /learning platform/i);
   app.window.dispatchEvent(Object.assign(new app.window.Event("keydown"), { key: "M", shiftKey: true }));
   app.document.querySelector("[name='participant']").value = "Ada L.";

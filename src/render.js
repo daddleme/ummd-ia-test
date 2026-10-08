@@ -15,27 +15,40 @@ export function render(view) {
   const menu = renderMenu(view);
   const main = renderMain(view);
   const moderator = view.moderatorOpen ? renderModerator(view) : "";
+  const langLabel = view.lang === "en" ? "Language" : "Sprache";
   return `<div id="testbar">
     <span>Prototyp</span>
-    <button type="button" data-version="a" aria-pressed="${view.version === "a"}">Version A</button>
-    <button type="button" data-version="b" aria-pressed="${view.version === "b"}">Version B</button>
+    <div class="segment" role="group" aria-label="Version">
+      <button type="button" data-version="a" aria-pressed="${view.version === "a"}">Version A</button>
+      <button type="button" data-version="b" aria-pressed="${view.version === "b"}">Version B</button>
+    </div>
     <button type="button" data-end>Test beenden</button>
   </div>
   <header>
-    <a href="#/" data-home>UMMD</a>
-    ${pageLink("notfall", view.level1[0].label, "is-emergency")}
-    <form data-search-form>
-      <input data-search aria-label="${escapeHtml(view.copy.searchLabel)}" value="${escapeHtml(view.routeName === "search" ? view.query : "")}">
-      <button type="submit">${escapeHtml(view.copy.searchButton)}</button>
-    </form>
-    ${pageLink("kontakt", view.level1[1].label)}
-    <button type="button" data-lang="de" aria-pressed="${view.lang === "de"}">DE</button>
-    <button type="button" data-lang="en" aria-pressed="${view.lang === "en"}">EN</button>
+    <div class="topline">
+      <a class="logo" href="#/" data-home><strong>UMMD</strong><small>Universitätsmedizin Magdeburg</small></a>
+      <div class="tools">
+        ${pageLink("notfall", view.level1[0].label, "is-emergency")}
+        <form data-search-form>
+          <input data-search aria-label="${escapeHtml(view.copy.searchLabel)}" placeholder="${escapeHtml(view.copy.searchLabel)}" value="${escapeHtml(view.routeName === "search" ? view.query : "")}">
+          <button type="submit">${escapeHtml(view.copy.searchButton)}</button>
+        </form>
+        ${pageLink("kontakt", view.level1[1].label, "quiet")}
+        <label class="lang">${escapeHtml(langLabel)}
+          <select data-lang-select aria-label="${escapeHtml(langLabel)}">
+            <option value="de" ${view.lang === "de" ? "selected" : ""}>Deutsch</option>
+            <option value="en" ${view.lang === "en" ? "selected" : ""}>English</option>
+          </select>
+        </label>
+      </div>
+    </div>
+    <div class="navwrap">
+      <nav>
+        ${view.areas.map((area) => `<button type="button" data-area="${area.id}" aria-expanded="${view.openArea === area.id}"${view.currentArea === area.id ? ' aria-current="true"' : ""}>${escapeHtml(area.label)}</button>`).join("")}
+      </nav>
+      ${menu}
+    </div>
   </header>
-  <nav>
-    ${view.areas.map((area) => `<button type="button" data-area="${area.id}" aria-expanded="${view.openArea === area.id}">${escapeHtml(area.label)}</button>`).join("")}
-  </nav>
-  ${menu}
   <main id="page">${main}</main>
   ${moderator}`;
 }
@@ -57,10 +70,11 @@ function renderMain(view) {
     if (view.hits.length === 0) return `<p>${escapeHtml(view.copy.noResults)} ${escapeHtml(view.query)}</p>`;
     return view.hits.map((hit) => `<article data-result="${escapeHtml(hit.id)}"><h2><a href="#/p/${escapeHtml(hit.id)}" data-page="${escapeHtml(hit.id)}" data-origin="Suche">${escapeHtml(hit.title)}</a></h2><p>${escapeHtml(hit.area)}</p><p>${escapeHtml(hit.sentence)}</p></article>`).join("");
   }
-  if (view.routeName === "home") return `<h1>${escapeHtml(view.home.title)}</h1><p>${escapeHtml(view.home.sentence)}</p>`;
-  const tiles = view.tiles.map((tile) => `<a class="tile" href="#/p/${escapeHtml(tile.id)}" data-page="${escapeHtml(tile.id)}" data-origin="Kachel">${escapeHtml(tile.label)}</a>`).join("");
+  if (view.routeName === "home") return `<h1>${escapeHtml(view.home.title)}</h1><p class="lead">${escapeHtml(view.home.sentence)}</p>`;
+  const tiles = view.tiles.map((tile) => `<a class="tile" href="#/p/${escapeHtml(tile.id)}" data-page="${escapeHtml(tile.id)}" data-origin="Kachel"><strong>${escapeHtml(tile.label)}</strong><span>${escapeHtml(tile.sentence)}</span></a>`).join("");
   const items = view.page.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
-  return `<h1>${escapeHtml(view.page.title)}</h1><p>${escapeHtml(view.page.sentence)}</p>${tiles ? `<div class="tiles">${tiles}</div>` : ""}<h2>${escapeHtml(view.copy.onThisPage)}</h2><ul>${items}</ul>`;
+  const eyebrow = view.areaName ? `<p class="eyebrow">${escapeHtml(view.areaName)}</p>` : "";
+  return `${eyebrow}<h1>${escapeHtml(view.page.title)}</h1><p class="lead">${escapeHtml(view.page.sentence)}</p>${tiles ? `<div class="tiles">${tiles}</div>` : ""}<h2>${escapeHtml(view.copy.onThisPage)}</h2><ul class="chips">${items}</ul>`;
 }
 
 function renderModerator(view) {

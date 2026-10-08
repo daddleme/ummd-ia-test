@@ -17,8 +17,13 @@ export function buildView(state) {
     pageId: page ? target.id : null,
     page: page ? page[state.lang] : null,
     areaName: page ? areaLabel(page.area, state.lang) : null,
+    currentArea: page ? page.area : null,
     tiles: page && state.version === "a" && content.hubs[target.id]
-      ? content.hubs[target.id].map((id) => ({ id, label: content.pages[id][state.lang].title }))
+      ? content.hubs[target.id].map((id) => ({
+          id,
+          label: content.pages[id][state.lang].title,
+          sentence: content.pages[id][state.lang].sentence,
+        }))
       : [],
     areas: content.areas.map((area) => ({ id: area.id, label: area[state.lang] })),
     level1: [
