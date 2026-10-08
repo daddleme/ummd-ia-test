@@ -1,0 +1,15 @@
+* { box-sizing: border-box; }
+body { margin: 0; font: 16px/1.4 system-ui, sans-serif; color: #222; }
+#testbar { display: flex; gap: 8px; align-items: center; padding: 6px 12px; background: #fff4cc; }
+header, nav { display: flex; gap: 8px; align-items: center; padding: 8px 12px; background: #f4f4f4; }
+a.is-emergency { background: #111; color: #fff; border-radius: 999px; padding: 2px 10px; text-decoration: none; }
+nav button[aria-expanded="true"] { background: #111; color: #fff; }
+[data-popup] { display: inline-flex; flex-direction: column; margin: 8px 12px; padding: 6px 0; border: 1px solid #111; background: #fff; min-width: 220px; }
+[data-popup] a { padding: 4px 12px; }
+[data-panel] { display: flex; width: max-content; max-width: none; border-bottom: 2px solid #111; background: #fff; }
+[data-panel] section { padding: 12px 16px; min-width: 180px; }
+[data-panel] h2 { margin: 0 0 8px; font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: #777; }
+main { padding: 16px; }
+.tiles { display: flex; gap: 8px; flex-wrap: wrap; }
+.tile { display: block; border: 1px solid #bbb; padding: 10px; min-width: 180px; background: #fafafa; color: inherit; }
+[data-moderator] { position: fixed; right: 12px; bottom: 12px; padding: 12px; background: #fff; border: 1px solid #111; display: grid; gap: 8px; }
