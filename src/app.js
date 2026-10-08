@@ -8,6 +8,7 @@ import { emptyLog, record, fileName, serialize } from "./log.js";
 import { popupOffset } from "./layout.js";
 
 const KEYS = { log: "ummd-log", version: "ummd-version", lang: "ummd-lang", moderator: "ummd-moderator" };
+const CLOSE_DELAY = 250;
 
 export function mount(document, window, deps = {}) {
   const local = deps.storageLocal ?? window.localStorage;
@@ -28,6 +29,7 @@ export function mount(document, window, deps = {}) {
     loggedKey: null,
     writing: false,
   };
+  let closeTimer = null;
 
   function visitKey() {
     const query = state.route.name === "search" ? state.query : "";
@@ -79,8 +81,28 @@ export function mount(document, window, deps = {}) {
     return node.getBoundingClientRect();
   }
 
+  function openMenu(area) {
+    clearTimeout(closeTimer);
+    if (state.openArea === area) return;
+    state.openArea = area;
+    showMenu();
+  }
+
+  function closeMenu() {
+    clearTimeout(closeTimer);
+    if (!state.openArea) return;
+    state.openArea = null;
+    showMenu();
+  }
+
+  function showMenu() {
+    document.querySelectorAll("[data-menu]").forEach((menu) => { menu.hidden = menu.dataset.menu !== state.openArea; });
+    document.querySelectorAll("[data-area]").forEach((button) => button.setAttribute("aria-expanded", String(button.dataset.area === state.openArea)));
+    placeMenus();
+  }
+
   function placeMenus() {
-    const menu = document.querySelector("[data-popup], [data-panel]");
+    const menu = state.openArea ? document.querySelector(`[data-menu="${state.openArea}"]`) : null;
     const anchor = state.openArea ? document.querySelector(`[data-area="${state.openArea}"]`) : null;
     const wrap = document.querySelector(".navwrap");
     if (!menu || !anchor || !wrap) return;
@@ -127,11 +149,11 @@ export function mount(document, window, deps = {}) {
       return;
     }
     const area = event.target.closest("[data-area]");
-    if (area) { state.openArea = state.openArea === area.dataset.area ? null : area.dataset.area; draw(); return; }
+    if (area) { openMenu(area.dataset.area); return; }
     const page = event.target.closest("[data-page]");
     if (page) { go({ name: "page", id: page.dataset.page }, page.dataset.origin || "Menü"); return; }
     if (event.target.closest("[data-home]")) { go({ name: "home" }, "Logo"); return; }
-    if (event.target.closest("#page")) { state.openArea = null; draw(); return; }
+    if (event.target.closest("#page")) { closeMenu(); return; }
     if (event.target.closest("[data-mark]")) {
       const form = document.querySelector("[data-moderator]");
       state.moderator = {
@@ -164,10 +186,23 @@ export function mount(document, window, deps = {}) {
     go({ name: "search" }, "direkte Adresse");
   });
 
+  document.querySelector("#app").addEventListener("mouseover", (event) => {
+    const area = event.target.closest("[data-area]");
+    if (area) openMenu(area.dataset.area);
+    else if (event.target.closest(".navwrap")) clearTimeout(closeTimer);
+  });
+
+  document.querySelector("#app").addEventListener("mouseout", (event) => {
+    if (!event.target.closest(".navwrap")) return;
+    if (event.relatedTarget && event.relatedTarget.closest && event.relatedTarget.closest(".navwrap")) return;
+    clearTimeout(closeTimer);
+    closeTimer = setTimeout(closeMenu, CLOSE_DELAY);
+  });
+
   window.addEventListener("keydown", (event) => {
-    if (event.key === "M" && event.shiftKey) state.moderatorOpen = !state.moderatorOpen;
-    else if (event.key === "Escape" && state.openArea) state.openArea = null;
-    else return;
+    if (event.key === "Escape") { closeMenu(); return; }
+    if (!(event.key === "M" && event.shiftKey)) return;
+    state.moderatorOpen = !state.moderatorOpen;
     draw();
   });
 

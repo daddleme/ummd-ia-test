@@ -34,15 +34,38 @@ function start(hash = "#/", search = "") {
   };
 }
 
-test("Dropdown öffnet per Klick und eine Kachel wechselt die Seite", () => {
+function hover(app, type, target, relatedTarget = null) {
+  target.dispatchEvent(Object.assign(new app.window.Event(type, { bubbles: true }), { relatedTarget }));
+}
+
+const isOpen = (app, area) => !app.document.querySelector(`[data-menu='${area}']`).hidden;
+
+test("Dropdown öffnet beim Überfahren und ein Menüpunkt wechselt die Seite", () => {
   const app = start();
-  app.document.querySelector("[data-area='studium']").click();
-  assert.ok(app.document.querySelector("[data-popup]"));
-  app.document.querySelector("[data-page='studierende']").click();
+  hover(app, "mouseover", app.document.querySelector("[data-area='studium']"));
+  assert.equal(isOpen(app, "studium"), true);
+  hover(app, "mouseover", app.document.querySelector("[data-area='forschung']"));
+  assert.equal(isOpen(app, "studium"), false);
+  assert.equal(isOpen(app, "forschung"), true);
+  hover(app, "mouseover", app.document.querySelector("[data-area='studium']"));
+  app.document.querySelector("[data-menu='studium'] [data-page='studierende']").click();
   assert.equal(app.document.querySelector("h1").textContent, "Für Studierende");
-  assert.equal(app.document.querySelector("[data-popup]"), null);
+  assert.equal(app.document.querySelectorAll("[data-menu]:not([hidden])").length, 0);
   const log = JSON.parse(app.local.get("ummd-log"));
   assert.equal(log.entries.at(-1).page.origin, "Menü");
+});
+
+test("Dropdown schließt kurz nach dem Verlassen, aber nicht beim Wechsel ins Menü", async () => {
+  const app = start();
+  const button = app.document.querySelector("[data-area='studium']");
+  const menu = app.document.querySelector("[data-menu='studium']");
+  hover(app, "mouseover", button);
+  hover(app, "mouseout", button, menu);
+  await new Promise((resolve) => setTimeout(resolve, 300));
+  assert.equal(isOpen(app, "studium"), true);
+  hover(app, "mouseout", menu, app.document.querySelector("#page"));
+  await new Promise((resolve) => setTimeout(resolve, 300));
+  assert.equal(isOpen(app, "studium"), false);
 });
 
 test("Versionsklick schreibt keine Navigation und übersteht die Sitzung", () => {

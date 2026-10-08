@@ -8,7 +8,6 @@ export function buildView(state) {
   const target = state.route.name === "page" ? resolveTarget(state.route.id, state.version) : { kind: state.route.name };
   const routeName = target.kind === "page" ? "page" : target.kind === "missing" ? "missing" : state.route.name === "search" ? "search" : "home";
   const page = routeName === "page" ? content.pages[target.id] : null;
-  const menu = state.openArea ? menuFor(state.openArea, state.version, state.lang) : null;
   const hits = routeName === "search" ? searchPages(state.query, state.version, state.lang) ?? [] : [];
   return {
     ...state,
@@ -25,13 +24,16 @@ export function buildView(state) {
           sentence: content.pages[id][state.lang].sentence,
         }))
       : [],
-    areas: content.areas.map((area) => ({ id: area.id, label: area[state.lang] })),
+    areas: content.areas.map((area) => ({
+      id: area.id,
+      label: area[state.lang],
+      menu: menuFor(area.id, state.version, state.lang),
+    })),
     level1: [
       { id: "notfall", label: content.pages.notfall[state.lang].title, emergency: true },
       { id: "kontakt", label: content.pages.kontakt[state.lang].title, emergency: false },
     ],
     home: content.home[state.lang],
-    menu,
     hits: hits.map((id) => ({
       id,
       title: content.pages[id][state.lang].title,

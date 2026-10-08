@@ -12,7 +12,7 @@ function pageLink(id, label, extraClass = "") {
 }
 
 export function render(view) {
-  const menu = renderMenu(view);
+  const menus = view.areas.map((area) => renderMenu(area, view.openArea === area.id)).join("");
   const main = renderMain(view);
   const moderator = view.moderatorOpen ? renderModerator(view) : "";
   const langLabel = view.lang === "en" ? "Language" : "Sprache";
@@ -46,20 +46,20 @@ export function render(view) {
       <nav>
         ${view.areas.map((area) => `<button type="button" data-area="${area.id}" aria-expanded="${view.openArea === area.id}"${view.currentArea === area.id ? ' aria-current="true"' : ""}>${escapeHtml(area.label)}</button>`).join("")}
       </nav>
-      ${menu}
+      ${menus}
     </div>
   </header>
   <main id="page">${main}</main>
   ${moderator}`;
 }
 
-function renderMenu(view) {
-  if (!view.menu) return "";
-  if (view.menu.type === "links") {
-    return `<div data-popup>${view.menu.items.map((item) => pageLink(item.id, item.label)).join("")}</div>`;
+function renderMenu(area, open) {
+  const attrs = `data-menu="${area.id}"${open ? "" : " hidden"}`;
+  if (area.menu.type === "links") {
+    return `<div data-popup ${attrs}>${area.menu.items.map((item) => pageLink(item.id, item.label)).join("")}</div>`;
   }
-  const columns = view.menu.columns.map((column) => `<section><h2>${escapeHtml(column.label)}</h2>${column.items.map((item) => pageLink(item.id, item.label)).join("")}</section>`).join("");
-  return `<div data-panel>${columns}</div>`;
+  const columns = area.menu.columns.map((column) => `<section><h2>${escapeHtml(column.label)}</h2>${column.items.map((item) => pageLink(item.id, item.label)).join("")}</section>`).join("");
+  return `<div data-panel ${attrs}>${columns}</div>`;
 }
 
 function renderMain(view) {

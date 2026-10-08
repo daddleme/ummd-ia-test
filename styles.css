@@ -254,6 +254,8 @@ nav button[aria-expanded="true"]::after { transform: rotate(-135deg); margin-top
   box-shadow: var(--shadow-2);
 }
 
+[data-menu][hidden] { display: none; }
+
 [data-popup] {
   display: flex;
   flex-direction: column;

@@ -29,9 +29,11 @@ test("Ebene 1 und Testleiste sind auf der Startseite da", () => {
 
 test("Version A zeigt ein Dropdown und Kacheln über der Liste", () => {
   const document = doc({ ...base, openArea: "studium", route: { name: "page", id: "studierende" } });
-  assert.deepEqual([...document.querySelectorAll("[data-popup] a")].map((node) => node.textContent), [
+  assert.deepEqual([...document.querySelectorAll("[data-popup][data-menu='studium'] a")].map((node) => node.textContent), [
     "Für Studieninteressierte", "Für Studierende", "Für Lehrende", "Studiendekanat",
   ]);
+  assert.equal(document.querySelector("[data-menu='studium']").hasAttribute("hidden"), false);
+  assert.equal(document.querySelector("[data-menu='forschung']").hasAttribute("hidden"), true);
   const main = document.querySelector("main").textContent;
   assert.equal(main.indexOf("Moodle") < main.indexOf("Auf dieser Seite"), true);
 });
@@ -39,9 +41,9 @@ test("Version A zeigt ein Dropdown und Kacheln über der Liste", () => {
 test("Version B macht Spaltenüberschriften zu Text und Hubs zur Startseite", () => {
   const document = doc({ ...base, version: "b", openArea: "studium", route: { name: "page", id: "studierende" } });
   assert.equal(document.querySelector("h1").textContent, "Universitätsmedizin Magdeburg");
-  const heading = [...document.querySelectorAll("[data-panel] h2")].find((node) => node.textContent === "Anlaufstellen");
+  const heading = [...document.querySelectorAll("[data-menu='studium'] h2")].find((node) => node.textContent === "Anlaufstellen");
   assert.equal(heading.matches("a"), false);
-  assert.ok([...document.querySelectorAll("[data-panel] a")].some((node) => node.dataset.page === "auslandsamt"));
+  assert.ok([...document.querySelectorAll("[data-menu='studium'] a")].some((node) => node.dataset.page === "auslandsamt"));
 });
 
 test("Suche zeigt Treffer oder den Hinweis mit dem Begriff", () => {
