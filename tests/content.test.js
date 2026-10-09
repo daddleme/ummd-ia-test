@@ -9,8 +9,16 @@ function strings(value, found = []) {
   return found;
 }
 
-test("kein sichtbarer Text enthält ein und-Zeichen", () => {
-  for (const value of strings(content)) assert.equal(value.includes("&"), false, value);
+test("Bezeichnungen verbinden zwei Bereiche mit &, Sätze schreiben und aus", () => {
+  for (const area of content.areas) {
+    for (const label of [area.de, area.en, ...area.b.flatMap((column) => [column.de, column.en])]) {
+      assert.equal(/ (und|and) /.test(label), false, label);
+    }
+  }
+  for (const page of Object.values(content.pages)) {
+    for (const lang of ["de", "en"]) assert.equal(page[lang].sentence.includes("&"), false, page[lang].sentence);
+  }
+  assert.equal(content.areas.find((area) => area.id === "studium").de, "Studium & Lehre");
 });
 
 test("Startseite hat den festgelegten Satz", () => {
@@ -33,7 +41,7 @@ test("Version B hat die freigegebenen Spalten und keine Einzelspalte", () => {
   const columns = Object.fromEntries(content.areas.map((area) => [area.id, area.b.map((column) => [column.de, column.pages])]));
   assert.deepEqual(columns.behandlung, [
     ["Behandlung finden", ["kliniken", "versorgungszentren", "institute", "ambulanzen"]],
-    ["Aufenthalt und Zuweisung", ["aufenthalt", "zuweisende"]],
+    ["Aufenthalt & Zuweisung", ["aufenthalt", "zuweisende"]],
   ]);
   assert.deepEqual(columns.forschung, [
     ["Themen", ["schwerpunkte", "klinische-studien"]],
@@ -47,11 +55,11 @@ test("Version B hat die freigegebenen Spalten und keine Einzelspalte", () => {
   ]);
   assert.deepEqual(columns.karriere, [
     ["Offene Stellen", ["stellenangebote", "berufungsverfahren"]],
-    ["Ausbildung und Arbeiten", ["ausbildung", "fortbildung", "benefits"]],
+    ["Ausbildung & Arbeiten", ["ausbildung", "fortbildung", "benefits"]],
   ]);
   assert.deepEqual(columns.ueber, [
     ["Porträt", ["wir", "kultur", "presse"]],
-    ["Leitung und Einrichtungen", ["leitung", "einrichtungen"]],
+    ["Leitung & Einrichtungen", ["leitung", "einrichtungen"]],
   ]);
   for (const area of content.areas) {
     for (const column of area.b) assert.ok(column.pages.length >= 2, column.de);
@@ -82,7 +90,7 @@ test("Hubs und jede verlinkte Id haben eine Seite in beiden Sprachen", () => {
 test("Stichworte, die kein Menüpunkt sind, stehen auf der genannten Seite", () => {
   assert.deepEqual(content.pages.schwerpunkte.de.items, ["Schwerpunkte", "Suche Einrichtung", "beteiligte Kliniken"]);
   assert.deepEqual(content.pages.wir.de.items, ["Krankenversorgung", "Forschung", "Lehre", "Standorte"]);
-  assert.deepEqual(content.pages.kultur.de.items, ["Leitbild", "Zusammenarbeit", "Qualität und Verantwortung"]);
+  assert.deepEqual(content.pages.kultur.de.items, ["Leitbild", "Zusammenarbeit", "Qualität & Verantwortung"]);
   assert.ok(content.pages.bewerbung.de.items.includes("Bewerbung international"));
   assert.ok(content.pages.auslandsamt.de.items.includes("Bewerbung international"));
   for (const id of ["studierende", "moodle", "skillslab", "sp-programm"]) {

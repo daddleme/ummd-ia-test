@@ -26,6 +26,8 @@ export const content = {
       missing: "Diese Seite gibt es im Prototyp nicht",
       homeLink: "Zur Startseite",
       areaDirekt: "Direkt",
+      breadcrumbHome: "Startseite",
+      breadcrumbLabel: "Brotkrumen",
     },
     en: {
       searchLabel: "Search",
@@ -35,23 +37,25 @@ export const content = {
       missing: "This page is not in the prototype",
       homeLink: "To the home page",
       areaDirekt: "Direct",
+      breadcrumbHome: "Home",
+      breadcrumbLabel: "Breadcrumb",
     },
   },
   areas: [
     {
       id: "behandlung",
-      de: "Behandlung und Aufenthalt",
-      en: "Treatment and stay",
+      de: "Behandlung & Aufenthalt",
+      en: "Treatment & stay",
       a: ["kliniken", "versorgungszentren", "institute", "ambulanzen", "aufenthalt", "zuweisende"],
       b: [
         { de: "Behandlung finden", en: "Find treatment", pages: ["kliniken", "versorgungszentren", "institute", "ambulanzen"] },
-        { de: "Aufenthalt und Zuweisung", en: "Stay and referral", pages: ["aufenthalt", "zuweisende"] },
+        { de: "Aufenthalt & Zuweisung", en: "Stay & referral", pages: ["aufenthalt", "zuweisende"] },
       ],
     },
     {
       id: "forschung",
-      de: "Forschung und Innovation",
-      en: "Research and innovation",
+      de: "Forschung & Innovation",
+      en: "Research & innovation",
       a: ["schwerpunkte", "klinische-studien", "infrastruktur", "kooperationen", "nachwuchs"],
       b: [
         { de: "Themen", en: "Topics", pages: ["schwerpunkte", "klinische-studien"] },
@@ -60,8 +64,8 @@ export const content = {
     },
     {
       id: "studium",
-      de: "Studium und Lehre",
-      en: "Study and teaching",
+      de: "Studium & Lehre",
+      en: "Study & teaching",
       a: ["studieninteressierte", "studierende", "lehrende", "studiendekanat"],
       b: [
         { de: "Für Studieninteressierte", en: "For prospective students", pages: ["studienangebote", "bewerbung"] },
@@ -72,12 +76,12 @@ export const content = {
     },
     {
       id: "karriere",
-      de: "Karriere und Ausbildung",
-      en: "Career and training",
+      de: "Karriere & Ausbildung",
+      en: "Career & training",
       a: ["stellenangebote", "berufungsverfahren", "ausbildung", "fortbildung", "benefits"],
       b: [
         { de: "Offene Stellen", en: "Open positions", pages: ["stellenangebote", "berufungsverfahren"] },
-        { de: "Ausbildung und Arbeiten", en: "Training and working", pages: ["ausbildung", "fortbildung", "benefits"] },
+        { de: "Ausbildung & Arbeiten", en: "Training & working", pages: ["ausbildung", "fortbildung", "benefits"] },
       ],
     },
     {
@@ -87,7 +91,7 @@ export const content = {
       a: ["wir", "leitung", "einrichtungen", "kultur", "presse"],
       b: [
         { de: "Porträt", en: "Portrait", pages: ["wir", "kultur", "presse"] },
-        { de: "Leitung und Einrichtungen", en: "Leadership and institutions", pages: ["leitung", "einrichtungen"] },
+        { de: "Leitung & Einrichtungen", en: "Leadership & institutions", pages: ["leitung", "einrichtungen"] },
       ],
     },
   ],
@@ -119,12 +123,12 @@ export const content = {
   pages: {
     notfall: page("direkt", "Notfall", "Hilfe bei einem medizinischen Notfall auf dem Campus.", ["Notaufnahme", "Notruf", "Weg zur Notaufnahme"], "Emergency", "Help in a medical emergency on campus.", ["Emergency department", "Emergency number", "Way to the emergency department"]),
     kontakt: page("direkt", "Kontakt", "So erreichen Sie die UMMD.", ["Telefon", "E-Mail", "Ansprechpartner"], "Contact", "How to get in touch with UMMD.", ["Phone", "Email", "Contacts"]),
-    anfahrt: page("direkt", "Anfahrt", "So kommen Sie zur UMMD.", ["Adresse", "Bus und Bahn", "Parken", "Lageplan"], "Directions", "How to get to UMMD.", ["Address", "Public transport", "Parking", "Site map"]),
+    anfahrt: page("direkt", "Anfahrt", "So kommen Sie zur UMMD.", ["Adresse", "Bus & Bahn", "Parken", "Lageplan"], "Directions", "How to get to UMMD.", ["Address", "Public transport", "Parking", "Site map"]),
     kliniken: page("behandlung", "Kliniken", "Die Kliniken der UMMD im Überblick.", ["Klinikübersicht", "Ansprechpartner", "Sprechstunden"], "Clinics", "The UMMD clinics at a glance.", ["Clinic overview", "Contacts", "Consultation hours"]),
     versorgungszentren: page("behandlung", "Medizinische Versorgungszentren", "Versorgung außerhalb der Kliniken.", ["Standorte der Zentren", "Angebote", "Kontakt"], "Medical care centers", "Care outside the clinics.", ["Center locations", "Services", "Contact"]),
     institute: page("behandlung", "Institute", "Die Institute der Medizinischen Fakultät.", ["Institutsübersicht", "Forschung an den Instituten", "Kontakt"], "Institutes", "The institutes of the Medical Faculty.", ["Institute overview", "Research at the institutes", "Contact"]),
     ambulanzen: page("behandlung", "Ambulanzen", "Ambulante Behandlung an der UMMD.", ["Ambulanzübersicht", "Sprechstunden", "Anmeldung"], "Outpatient clinics", "Outpatient care at UMMD.", ["Outpatient clinic overview", "Consultation hours", "Registration"]),
-    aufenthalt: page("behandlung", "Aufenthalt und Besuch", "Informationen für den Aufenthalt und für Besuche.", ["Besuchszeiten", "Übernachtung", "Service vor Ort"], "Stay and visit", "Information for a stay and for visits.", ["Visiting hours", "Overnight stay", "On-site services"]),
+    aufenthalt: page("behandlung", "Aufenthalt & Besuch", "Informationen für den Aufenthalt und für Besuche.", ["Besuchszeiten", "Übernachtung", "Service vor Ort"], "Stay & visit", "Information for a stay and for visits.", ["Visiting hours", "Overnight stay", "On-site services"]),
     zuweisende: page("behandlung", "Für Zuweisende", "Zugang für zuweisende Ärztinnen und Ärzte.", ["Zuweisung", "Einweisung", "Kontakt"], "For referring physicians", "Access for referring physicians.", ["Referral", "Admission", "Contact"]),
     schwerpunkte: page("forschung", "Forschungsschwerpunkte", "Die wissenschaftlichen Schwerpunkte der UMMD.", ["Schwerpunkte", "Suche Einrichtung", "beteiligte Kliniken"], "Research focus areas", "The scientific focus areas of UMMD.", ["Focus areas", "Find a facility", "Participating clinics"]),
     "klinische-studien": page("forschung", "Klinische Studien", "Studien, an denen die UMMD beteiligt ist.", ["Laufende Studien", "Teilnahme", "Kontakt"], "Clinical studies", "Studies that UMMD takes part in.", ["Current studies", "Participation", "Contact"]),
@@ -151,7 +155,7 @@ export const content = {
     wir: page("ueber", "Wer wir sind", "Auftrag und Aufbau der UMMD.", ["Krankenversorgung", "Forschung", "Lehre", "Standorte"], "Who we are", "Mission and structure of UMMD.", ["Patient care", "Research", "Teaching", "Sites"]),
     leitung: page("ueber", "Leitungsvorstand", "Die Leitung der UMMD.", ["Mitglieder", "Aufgaben", "Kontakt"], "Executive board", "The leadership of UMMD.", ["Members", "Responsibilities", "Contact"]),
     einrichtungen: page("ueber", "Einrichtungen", "Einrichtungen unter dem Dach der UMMD.", ["Fakultät", "Klinikum", "weitere Einrichtungen"], "Institutions", "Institutions under the UMMD umbrella.", ["Faculty", "University hospital", "Other institutions"]),
-    kultur: page("ueber", "Kultur und Werte", "Wofür die UMMD steht.", ["Leitbild", "Zusammenarbeit", "Qualität und Verantwortung"], "Culture and values", "What UMMD stands for.", ["Mission statement", "Collaboration", "Quality and responsibility"]),
-    presse: page("ueber", "Presse und Aktuelles", "Neuigkeiten und Pressekontakt.", ["Meldungen", "Pressekontakt", "Bildmaterial"], "Press and news", "News and press contact.", ["News", "Press contact", "Images"]),
+    kultur: page("ueber", "Kultur & Werte", "Wofür die UMMD steht.", ["Leitbild", "Zusammenarbeit", "Qualität & Verantwortung"], "Culture & values", "What UMMD stands for.", ["Mission statement", "Collaboration", "Quality & responsibility"]),
+    presse: page("ueber", "Presse & Aktuelles", "Neuigkeiten und Pressekontakt.", ["Meldungen", "Pressekontakt", "Bildmaterial"], "Press & news", "News and press contact.", ["News", "Press contact", "Images"]),
   },
 };

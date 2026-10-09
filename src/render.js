@@ -97,11 +97,44 @@ function renderMain(view) {
     if (view.hits.length === 0) return `<p>${escapeHtml(view.copy.noResults)} ${escapeHtml(view.query)}</p>`;
     return view.hits.map((hit) => `<article data-result="${escapeHtml(hit.id)}"><h2><a href="#/p/${escapeHtml(hit.id)}" data-page="${escapeHtml(hit.id)}" data-origin="Suche">${escapeHtml(hit.title)}</a></h2><p>${escapeHtml(hit.area)}</p><p>${escapeHtml(hit.sentence)}</p></article>`).join("");
   }
-  if (view.routeName === "home") return `<h1>${escapeHtml(view.home.title)}</h1><p class="lead">${escapeHtml(view.home.sentence)}</p>`;
-  const tiles = view.tiles.map((tile) => `<a class="tile" href="#/p/${escapeHtml(tile.id)}" data-page="${escapeHtml(tile.id)}" data-origin="Kachel"><strong>${escapeHtml(tile.label)}</strong><span>${escapeHtml(tile.sentence)}</span></a>`).join("");
-  const items = view.page.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
-  const eyebrow = view.areaName ? `<p class="eyebrow">${escapeHtml(view.areaName)}</p>` : "";
-  return `${eyebrow}<h1>${escapeHtml(view.page.title)}</h1><p class="lead">${escapeHtml(view.page.sentence)}</p>${tiles ? `<div class="tiles">${tiles}</div>` : ""}<h2>${escapeHtml(view.copy.onThisPage)}</h2><ul class="chips">${items}</ul>`;
+  if (view.routeName === "home") {
+    return `${renderHero(view.home.title, "")}<div class="sk-grid">${[1, 2, 3].map(() => renderCard("")).join("")}</div>${SKELETON_BAND}`;
+  }
+  const tiles = view.tiles.map((tile) => `<a class="tile" href="#/p/${escapeHtml(tile.id)}" data-page="${escapeHtml(tile.id)}" data-origin="Kachel"><strong>${escapeHtml(tile.label)}</strong><span class="sk" aria-hidden="true"></span><span class="sk sk-short" aria-hidden="true"></span></a>`).join("");
+  const cards = view.page.items.map((item) => renderCard(item)).join("");
+  return `${renderHero(view.page.title, renderCrumbs(view))}${tiles ? `<div class="tiles">${tiles}</div>` : ""}<h2>${escapeHtml(view.copy.onThisPage)}</h2><div class="sk-grid">${cards}</div>${SKELETON_BAND}`;
+}
+
+const SKELETON_BAND = `<section class="sk-band" aria-hidden="true">
+  <div class="sk-lines"><span class="sk sk-title"></span><span class="sk"></span><span class="sk"></span><span class="sk sk-short"></span></div>
+  <div class="sk sk-media"></div>
+</section>`;
+
+function renderHero(title, crumbs) {
+  return `<section class="hero">
+    <div class="hero-text">
+      ${crumbs}
+      <h1>${escapeHtml(title)}</h1>
+      <div class="sk-lines" aria-hidden="true"><span class="sk"></span><span class="sk"></span><span class="sk sk-short"></span></div>
+      <div class="sk-buttons" aria-hidden="true"><span class="sk sk-btn sk-btn-primary"></span><span class="sk sk-btn"></span></div>
+    </div>
+    <div class="sk sk-media" aria-hidden="true"></div>
+  </section>`;
+}
+
+function renderCard(title) {
+  const heading = title ? `<h3>${escapeHtml(title)}</h3>` : `<span class="sk sk-title" aria-hidden="true"></span>`;
+  return `<article class="sk-card"><div class="sk sk-thumb" aria-hidden="true"></div>${heading}<span class="sk" aria-hidden="true"></span><span class="sk sk-short" aria-hidden="true"></span></article>`;
+}
+
+function renderCrumbs(view) {
+  const items = view.crumbs.map((crumb) => {
+    if (crumb.kind === "home") return `<li><a href="#/" data-home data-origin="Brotkrumen">${escapeHtml(crumb.label)}</a></li>`;
+    if (crumb.kind === "page") return `<li><a href="#/p/${escapeHtml(crumb.id)}" data-page="${escapeHtml(crumb.id)}" data-origin="Brotkrumen">${escapeHtml(crumb.label)}</a></li>`;
+    if (crumb.kind === "current") return `<li aria-current="page">${escapeHtml(crumb.label)}</li>`;
+    return `<li>${escapeHtml(crumb.label)}</li>`;
+  }).join("");
+  return `<div class="crumbs" role="navigation" aria-label="${escapeHtml(view.copy.breadcrumbLabel)}"><ol>${items}</ol></div>`;
 }
 
 function renderModerator(view) {

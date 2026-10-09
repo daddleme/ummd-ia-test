@@ -11,7 +11,7 @@
 ## Global Constraints
 
 - Eine statische Website, später unter einem öffentlichen Link. Kein Server, keine Anmeldung.
-- Alle sichtbaren Texte schreiben „und“ aus. Das Zeichen & kommt in der Oberfläche nicht vor.
+- Bezeichnungen, die zwei Bereiche verbinden (Navigation, Spaltenüberschriften, Seitentitel, Listeneinträge), nutzen „&“, um Platz zu sparen. Ganze Sätze schreiben „und“ aus.
 - Es gibt keinen Build-Schritt. HTML, CSS und ES-Module genügen.
 - Die Handy-Ansicht ist nicht Teil dieses Prototyps. Das Fenster wird so breit vorausgesetzt, dass Ebene 2 in einer Zeile steht.
 - DE/EN schaltet Navigationsbezeichnungen, Seitentitel, den einen Satz und die Liste „Auf dieser Seite“. Die Testleiste bleibt deutsch.

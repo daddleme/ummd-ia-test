@@ -15,5 +15,5 @@ test("leere Id ist die Startseite, unbekannte Id fehlt", () => {
 
 test("Bereichsnamen", () => {
   assert.equal(areaLabel("direkt", "de"), "Direkt");
-  assert.equal(areaLabel("studium", "en"), "Study and teaching");
+  assert.equal(areaLabel("studium", "en"), "Study & teaching");
 });

@@ -3,6 +3,16 @@ import { menuFor } from "./menu.js";
 import { resolveTarget, areaLabel } from "./pages.js";
 import { searchPages } from "./search.js";
 
+function breadcrumbs(id, version, lang) {
+  const page = content.pages[id];
+  const crumbs = [{ kind: "home", label: content.ui[lang].breadcrumbHome }];
+  if (page.area !== "direkt") crumbs.push({ kind: "area", label: areaLabel(page.area, lang) });
+  const hub = version === "a" ? Object.keys(content.hubs).find((hubId) => content.hubs[hubId].includes(id)) : null;
+  if (hub) crumbs.push({ kind: "page", id: hub, label: content.pages[hub][lang].title });
+  crumbs.push({ kind: "current", label: page[lang].title });
+  return crumbs;
+}
+
 export function buildView(state) {
   const copy = content.ui[state.lang];
   const target = state.route.name === "page" ? resolveTarget(state.route.id, state.version) : { kind: state.route.name };
@@ -15,7 +25,7 @@ export function buildView(state) {
     routeName,
     pageId: page ? target.id : null,
     page: page ? page[state.lang] : null,
-    areaName: page ? areaLabel(page.area, state.lang) : null,
+    crumbs: page ? breadcrumbs(target.id, state.version, state.lang) : null,
     currentArea: page ? page.area : null,
     tiles: page && state.version === "a" && content.hubs[target.id]
       ? content.hubs[target.id].map((id) => ({

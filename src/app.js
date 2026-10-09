@@ -183,7 +183,8 @@ export function mount(document, window, deps = {}) {
     if (area) { openMenu(area.dataset.area); return; }
     const page = event.target.closest("[data-page]");
     if (page) { go({ name: "page", id: page.dataset.page }, page.dataset.origin || "Menü"); return; }
-    if (event.target.closest("[data-home]")) { go({ name: "home" }, "Logo"); return; }
+    const home = event.target.closest("[data-home]");
+    if (home) { go({ name: "home" }, home.dataset.origin || "Logo"); return; }
     if (event.target.closest("#page")) { closeMenu(); return; }
     if (event.target.closest("[data-mark]")) {
       const form = document.querySelector("[data-moderator]");
