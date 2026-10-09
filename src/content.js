@@ -31,6 +31,7 @@ export const content = {
       areaDirekt: "Direkt",
       breadcrumbHome: "Startseite",
       breadcrumbLabel: "Brotkrumen",
+      finderPlaceholder: "Erkrankung, Fachgebiet oder Überweisung eingeben",
     },
     en: {
       searchLabel: "Search",
@@ -42,6 +43,7 @@ export const content = {
       areaDirekt: "Direct",
       breadcrumbHome: "Home",
       breadcrumbLabel: "Breadcrumb",
+      finderPlaceholder: "Enter a condition, specialty or referral",
     },
   },
   areas: [
@@ -51,8 +53,8 @@ export const content = {
       en: "Treatment & stay",
       a: ["kliniken", "versorgungszentren", "institute", "ambulanzen", "aufenthalt", "zuweisende"],
       b: [
-        { de: "Behandlung finden", en: "Find treatment", pages: ["kliniken", "versorgungszentren", "institute", "ambulanzen"] },
-        { de: "Aufenthalt & Zuweisung", en: "Stay & referral", pages: ["aufenthalt", "zuweisende"] },
+        { de: "Behandlung finden", en: "Find treatment", pages: ["kliniken", "versorgungszentren", "institute", "ambulanzen"], cta: "sprechstunde" },
+        { de: "Weitere Informationen", en: "More information", pages: ["aufenthalt", "zuweisende"] },
       ],
     },
     {
@@ -83,8 +85,8 @@ export const content = {
       en: "Career & training",
       a: ["stellenangebote", "berufungsverfahren", "ausbildung", "fortbildung", "benefits"],
       b: [
-        { de: "Offene Stellen", en: "Open positions", pages: ["stellenangebote", "berufungsverfahren"] },
-        { de: "Ausbildung & Arbeiten", en: "Training & working", pages: ["ausbildung", "fortbildung", "benefits"] },
+        { de: "Offene Stellen", en: "Open positions", pages: ["stellenangebote", "berufungsverfahren", "benefits"] },
+        { de: "Ausbildung", en: "Training", pages: ["ausbildung", "fortbildung"] },
       ],
     },
     {
@@ -94,7 +96,7 @@ export const content = {
       a: ["wir", "leitung", "einrichtungen", "kultur", "presse"],
       b: [
         { de: "Porträt", en: "Portrait", pages: ["wir", "kultur", "presse"] },
-        { de: "Leitung & Einrichtungen", en: "Leadership & institutions", pages: ["leitung", "einrichtungen"] },
+        { de: "Organisation", en: "Organisation", pages: ["leitung", "einrichtungen", "standorte"] },
       ],
     },
   ],
@@ -112,23 +114,37 @@ export const content = {
     { terms: ["anfahrt", "parken", "adresse"], page: "anfahrt" },
     { terms: ["zuweisung", "einweisung"], page: "zuweisende" },
     { terms: ["jobs", "stellen"], page: "stellenangebote" },
+    { terms: ["sprechstunde", "termin", "erkrankung", "überweisung"], page: "sprechstunde" },
   ],
+  versionOnly: { sprechstunde: "b", standorte: "b" },
   pageOrder: [
     "notfall", "kontakt", "anfahrt",
-    "kliniken", "versorgungszentren", "institute", "ambulanzen", "aufenthalt", "zuweisende",
+    "sprechstunde", "kliniken", "versorgungszentren", "institute", "ambulanzen", "aufenthalt", "zuweisende",
     "schwerpunkte", "klinische-studien", "infrastruktur", "kooperationen", "nachwuchs",
     "studieninteressierte", "studierende", "lehrende", "studiendekanat",
     "humanmedizin", "immunologie", "neuroscience", "bewerbung", "moodle", "skillslab", "sp-programm",
     "lehrangebote", "weiterbildung", "auslandsamt",
     "stellenangebote", "berufungsverfahren", "ausbildung", "fortbildung", "benefits",
-    "wir", "leitung", "einrichtungen", "kultur", "presse",
+    "wir", "leitung", "einrichtungen", "standorte", "kultur", "presse",
   ],
   pages: {
     notfall: page("direkt", "Notfall", "Hilfe bei einem medizinischen Notfall auf dem Campus.", ["Notaufnahme", "Notruf", "Weg zur Notaufnahme"], "Emergency", "Help in a medical emergency on campus.", ["Emergency department", "Emergency number", "Way to the emergency department"]),
     kontakt: page("direkt", "Kontakt", "So erreichen Sie die UMMD.", ["Telefon", "E-Mail", "Ansprechpartner"], "Contact", "How to get in touch with UMMD.", ["Phone", "Email", "Contacts"]),
     anfahrt: page("direkt", "Anfahrt", "So kommen Sie zur UMMD.", ["Adresse", "Bus & Bahn", "Parken", "Lageplan"], "Directions", "How to get to UMMD.", ["Address", "Public transport", "Parking", "Site map"]),
     kliniken: page("behandlung", "Kliniken", "Die Kliniken der UMMD im Überblick.", ["Klinikübersicht", "Ansprechpartner", "Sprechstunden"], "Clinics", "The UMMD clinics at a glance.", ["Clinic overview", "Contacts", "Consultation hours"]),
-    versorgungszentren: page("behandlung", "Medizinische Versorgungszentren", "Versorgung außerhalb der Kliniken.", ["Standorte der Zentren", "Angebote", "Kontakt"], "Medical care centers", "Care outside the clinics.", ["Center locations", "Services", "Contact"]),
+    versorgungszentren: {
+      ...page("behandlung", "Medizinische Versorgungszentren", "Versorgung außerhalb der Kliniken.", ["Standorte der Zentren", "Angebote", "Kontakt"], "Medical care centers", "Care outside the clinics.", ["Center locations", "Services", "Contact"]),
+      versions: {
+        b: {
+          de: { title: "Zentren (MVZ)", sentence: "Medizinische Versorgungszentren außerhalb der Kliniken." },
+          en: { title: "Centers (MVZ)", sentence: "Medical care centers outside the clinics." },
+        },
+      },
+    },
+    sprechstunde: {
+      ...page("behandlung", "Sprechstunde finden", "Die passende Sprechstunde über alle Kliniken, Zentren, Institute und Ambulanzen finden.", ["Kliniken", "Zentren (MVZ)", "Institute", "Ambulanzen"], "Find a consultation", "Find the right consultation across all clinics, centers, institutes and outpatient clinics.", ["Clinics", "Centers (MVZ)", "Institutes", "Outpatient clinics"]),
+      finder: true,
+    },
     institute: page("behandlung", "Institute", "Die Institute der Medizinischen Fakultät.", ["Institutsübersicht", "Forschung an den Instituten", "Kontakt"], "Institutes", "The institutes of the Medical Faculty.", ["Institute overview", "Research at the institutes", "Contact"]),
     ambulanzen: page("behandlung", "Ambulanzen", "Ambulante Behandlung an der UMMD.", ["Ambulanzübersicht", "Sprechstunden", "Anmeldung"], "Outpatient clinics", "Outpatient care at UMMD.", ["Outpatient clinic overview", "Consultation hours", "Registration"]),
     aufenthalt: page("behandlung", "Aufenthalt & Besuch", "Informationen für den Aufenthalt und für Besuche.", ["Besuchszeiten", "Übernachtung", "Service vor Ort"], "Stay & visit", "Information for a stay and for visits.", ["Visiting hours", "Overnight stay", "On-site services"]),
@@ -157,9 +173,18 @@ export const content = {
     ausbildung: page("karriere", "Ausbildung", "Ausbildung an der UMMD.", ["Berufe", "Freie Plätze", "Bewerbung"], "Vocational training", "Vocational training at UMMD.", ["Occupations", "Open places", "Application"]),
     fortbildung: page("karriere", "Fort- und Weiterbildung", "Fortbildung für Beschäftigte.", ["Programm", "Anmeldung", "Zertifikate"], "Staff training", "Continuing education for staff.", ["Program", "Registration", "Certificates"]),
     benefits: page("karriere", "Benefits", "Was die UMMD als Arbeitgeberin bietet.", ["Arbeitsbedingungen", "Familie", "Entwicklung"], "Benefits", "What UMMD offers as an employer.", ["Working conditions", "Family", "Development"]),
-    wir: page("ueber", "Wer wir sind", "Auftrag und Aufbau der UMMD.", ["Krankenversorgung", "Forschung", "Lehre", "Standorte"], "Who we are", "Mission and structure of UMMD.", ["Patient care", "Research", "Teaching", "Sites"]),
+    wir: {
+      ...page("ueber", "Wer wir sind", "Auftrag und Aufbau der UMMD.", ["Krankenversorgung", "Forschung", "Lehre", "Standorte"], "Who we are", "Mission and structure of UMMD.", ["Patient care", "Research", "Teaching", "Sites"]),
+      versions: {
+        b: {
+          de: { title: "Wer wir sind?" },
+          en: { title: "Who are we?" },
+        },
+      },
+    },
     leitung: page("ueber", "Leitungsvorstand", "Die Leitung der UMMD.", ["Mitglieder", "Aufgaben", "Kontakt"], "Executive board", "The leadership of UMMD.", ["Members", "Responsibilities", "Contact"]),
     einrichtungen: page("ueber", "Einrichtungen", "Einrichtungen unter dem Dach der UMMD.", ["Fakultät", "Klinikum", "Weitere Einrichtungen"], "Institutions", "Institutions under the UMMD umbrella.", ["Faculty", "University hospital", "Other institutions"]),
+    standorte: page("ueber", "Standorte", "Die Standorte der UMMD in Magdeburg.", ["Campus Leipziger Straße", "Weitere Standorte", "Lageplan"], "Locations", "UMMD locations in Magdeburg.", ["Leipziger Straße campus", "Other locations", "Site map"]),
     kultur: page("ueber", "Kultur & Werte", "Wofür die UMMD steht.", ["Leitbild", "Zusammenarbeit", "Qualität & Verantwortung"], "Culture & values", "What UMMD stands for.", ["Mission statement", "Collaboration", "Quality & responsibility"]),
     presse: page("ueber", "Presse & Aktuelles", "Neuigkeiten und Pressekontakt.", ["Meldungen", "Pressekontakt", "Bildmaterial"], "Press & news", "News and press contact.", ["News", "Press contact", "Images"]),
   },

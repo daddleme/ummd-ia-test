@@ -41,7 +41,7 @@ test("Version B hat die freigegebenen Spalten und keine Einzelspalte", () => {
   const columns = Object.fromEntries(content.areas.map((area) => [area.id, area.b.map((column) => [column.de, column.pages])]));
   assert.deepEqual(columns.behandlung, [
     ["Behandlung finden", ["kliniken", "versorgungszentren", "institute", "ambulanzen"]],
-    ["Aufenthalt & Zuweisung", ["aufenthalt", "zuweisende"]],
+    ["Weitere Informationen", ["aufenthalt", "zuweisende"]],
   ]);
   assert.deepEqual(columns.forschung, [
     ["Themen", ["schwerpunkte", "klinische-studien"]],
@@ -54,12 +54,12 @@ test("Version B hat die freigegebenen Spalten und keine Einzelspalte", () => {
     ["Anlaufstellen", ["studiendekanat", "auslandsamt"]],
   ]);
   assert.deepEqual(columns.karriere, [
-    ["Offene Stellen", ["stellenangebote", "berufungsverfahren"]],
-    ["Ausbildung & Arbeiten", ["ausbildung", "fortbildung", "benefits"]],
+    ["Offene Stellen", ["stellenangebote", "berufungsverfahren", "benefits"]],
+    ["Ausbildung", ["ausbildung", "fortbildung"]],
   ]);
   assert.deepEqual(columns.ueber, [
     ["Porträt", ["wir", "kultur", "presse"]],
-    ["Leitung & Einrichtungen", ["leitung", "einrichtungen"]],
+    ["Organisation", ["leitung", "einrichtungen", "standorte"]],
   ]);
   for (const area of content.areas) {
     for (const column of area.b) assert.ok(column.pages.length >= 2, column.de);
@@ -108,6 +108,7 @@ test("Synonyme zeigen auf vorhandene Seiten", () => {
     { terms: ["anfahrt", "parken", "adresse"], page: "anfahrt" },
     { terms: ["zuweisung", "einweisung"], page: "zuweisende" },
     { terms: ["jobs", "stellen"], page: "stellenangebote" },
+    { terms: ["sprechstunde", "termin", "erkrankung", "überweisung"], page: "sprechstunde" },
   ]);
   for (const synonym of content.synonyms) assert.ok(content.pages[synonym.page]);
 });

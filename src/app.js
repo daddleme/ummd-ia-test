@@ -6,6 +6,7 @@ import { searchPages } from "./search.js";
 import { content } from "./content.js";
 import { emptyLog, record, fileName, serialize } from "./log.js";
 import { popupOffset } from "./layout.js";
+import { hiddenInVersion } from "./pages.js";
 
 const KEYS = { log: "ummd-log", recording: "ummd-recording", version: "ummd-version", lang: "ummd-lang", moderator: "ummd-moderator", testbarHidden: "ummd-testbar-hidden" };
 const CLOSE_DELAY = 250;
@@ -76,7 +77,7 @@ export function mount(document, window, deps = {}) {
   }
 
   function draw() {
-    if (state.route.name === "page" && state.version === "b" && content.hubs[state.route.id]) {
+    if (state.route.name === "page" && hiddenInVersion(state.route.id, state.version)) {
       state.route = { name: "home" };
       writeAddress("replace");
     }
@@ -216,6 +217,13 @@ export function mount(document, window, deps = {}) {
   });
 
   document.querySelector("#app").addEventListener("submit", (event) => {
+    if (event.target.matches("[data-finder-form]")) {
+      event.preventDefault();
+      const query = event.target.querySelector("[data-finder]").value.trim();
+      if (query) log({ type: "sprechstunde", version: state.version, search: { query } });
+      persist();
+      return;
+    }
     if (!event.target.matches("[data-search-form]")) return;
     event.preventDefault();
     const query = event.target.querySelector("[data-search]").value;

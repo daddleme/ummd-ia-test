@@ -85,7 +85,10 @@ function renderMenu(area, open) {
   if (area.menu.type === "links") {
     return `<div data-popup ${attrs}>${area.menu.items.map((item) => pageLink(item.id, item.label)).join("")}</div>`;
   }
-  const columns = area.menu.columns.map((column) => `<section><h2>${escapeHtml(column.label)}</h2>${column.items.map((item) => pageLink(item.id, item.label)).join("")}</section>`).join("");
+  const columns = area.menu.columns.map((column) => {
+    const cta = column.cta ? `<a href="#/p/${escapeHtml(column.cta.id)}" data-page="${escapeHtml(column.cta.id)}" class="menu-cta">${ARROW_RIGHT}${escapeHtml(column.cta.label)}</a>` : "";
+    return `<section><h2>${escapeHtml(column.label)}</h2>${column.items.map((item) => pageLink(item.id, item.label)).join("")}${cta}</section>`;
+  }).join("");
   return `<div data-panel ${attrs}>${columns}</div>`;
 }
 
@@ -103,7 +106,8 @@ function renderMain(view) {
   const tiles = view.tiles.map((tile) => `<a class="tile" href="#/p/${escapeHtml(tile.id)}" data-page="${escapeHtml(tile.id)}" data-origin="Kachel"><strong>${escapeHtml(tile.label)}</strong><span class="sk" aria-hidden="true"></span><span class="sk sk-short" aria-hidden="true"></span></a>`).join("");
   const cards = view.sections.map((item) => renderCard(item)).join("");
   const sections = cards ? `<h2>${escapeHtml(view.copy.onThisPage)}</h2><div class="sk-grid">${cards}</div>` : "";
-  return `${renderHero(view.page.title, renderCrumbs(view))}${tiles ? `<div class="tiles">${tiles}</div>` : ""}${sections}${SKELETON_BAND}`;
+  const hero = view.finder ? renderFinderHero(view) : renderHero(view.page.title, renderCrumbs(view));
+  return `${hero}${tiles ? `<div class="tiles">${tiles}</div>` : ""}${sections}${SKELETON_BAND}`;
 }
 
 const SKELETON_BAND = `<section class="sk-band" aria-hidden="true">
@@ -120,6 +124,19 @@ function renderHero(title, crumbs) {
       <div class="sk-buttons" aria-hidden="true"><span class="sk sk-btn sk-btn-primary"></span><span class="sk sk-btn"></span></div>
     </div>
     <div class="sk sk-media" aria-hidden="true"></div>
+  </section>`;
+}
+
+function renderFinderHero(view) {
+  return `<section class="hero hero-finder">
+    ${renderCrumbs(view)}
+    <h1>${escapeHtml(view.page.title)}</h1>
+    <form class="finder" data-finder-form role="search">
+      ${SEARCH_ICON}
+      <input data-finder aria-label="${escapeHtml(view.page.title)}" placeholder="${escapeHtml(view.copy.finderPlaceholder)}">
+      <button type="submit" aria-label="${escapeHtml(view.copy.searchButton)}" title="${escapeHtml(view.copy.searchButton)}">${ARROW_RIGHT}</button>
+    </form>
+    <div class="finder-filters" aria-hidden="true"><span class="sk sk-pill"></span><span class="sk sk-pill"></span><span class="sk sk-pill"></span><span class="sk sk-pill"></span></div>
   </section>`;
 }
 
