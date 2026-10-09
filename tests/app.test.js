@@ -42,6 +42,7 @@ const isOpen = (app, area) => !app.document.querySelector(`[data-menu='${area}']
 
 test("Dropdown öffnet beim Überfahren und ein Menüpunkt wechselt die Seite", () => {
   const app = start();
+  app.document.querySelector("[data-start]").click();
   hover(app, "mouseover", app.document.querySelector("[data-area='studium']"));
   assert.equal(isOpen(app, "studium"), true);
   hover(app, "mouseover", app.document.querySelector("[data-area='forschung']"));
@@ -70,6 +71,7 @@ test("Dropdown schließt kurz nach dem Verlassen, aber nicht beim Wechsel ins Me
 
 test("Versionsklick schreibt keine Navigation und übersteht die Sitzung", () => {
   const app = start("#/p/moodle", "?v=a");
+  app.document.querySelector("[data-start]").click();
   const before = JSON.parse(app.local.get("ummd-log")).entries.length;
   app.document.querySelector("[data-version='b']").click();
   assert.equal(app.document.querySelector("[data-version='b']").getAttribute("aria-pressed"), "true");
@@ -81,6 +83,7 @@ test("Versionsklick schreibt keine Navigation und übersteht die Sitzung", () =>
 
 test("Suche, Sprache, Marke und Download", () => {
   const app = start();
+  app.document.querySelector("[data-start]").click();
   app.document.querySelector("[data-search]").value = "Fachschaft";
   app.document.querySelector("[data-search-form]").dispatchEvent(new app.window.Event("submit", { bubbles: true, cancelable: true }));
   assert.ok(app.document.querySelector("[data-result='moodle']"));
@@ -100,6 +103,35 @@ test("Suche, Sprache, Marke und Download", () => {
   assert.ok(saved.entries.some((entry) => entry.type === "search" && entry.search.query === "Fachschaft"));
   assert.ok(saved.entries.some((entry) => entry.type === "page" && entry.page.origin === "Suche"));
   assert.equal(app.local.get("ummd-log").includes("Fachschaft"), true);
+});
+
+test("Aufzeichnung läuft nur zwischen Test starten und Test beenden", () => {
+  const app = start("#/p/moodle", "?v=a");
+  app.document.querySelector("[data-page='kliniken']").click();
+  assert.equal(JSON.parse(app.local.get("ummd-log")).entries.length, 0);
+  assert.equal(app.document.querySelector("[data-end]").disabled, true);
+
+  app.document.querySelector("[data-start]").click();
+  assert.equal(app.document.querySelector("[data-start]").disabled, true);
+  assert.match(app.document.querySelector("[data-status]").textContent, /Aufzeichnung läuft/);
+  let entries = JSON.parse(app.local.get("ummd-log")).entries;
+  assert.deepEqual(entries.map((entry) => entry.type), ["start", "page"]);
+  assert.equal(entries[1].page.origin, "Teststart");
+
+  app.document.querySelector("[data-page='moodle']").click();
+  app.document.querySelector("[data-end]").click();
+  const saved = JSON.parse(app.downloads[0].text);
+  assert.deepEqual(saved.entries.map((entry) => entry.type), ["start", "page", "page", "end"]);
+  assert.equal(app.document.querySelector("[data-start]").disabled, false);
+
+  app.document.querySelector("[data-page='kliniken']").click();
+  assert.equal(JSON.parse(app.local.get("ummd-log")).entries.length, 4);
+  app.document.querySelector("[data-end]").click();
+  assert.equal(app.downloads[1].text, app.downloads[0].text);
+
+  app.document.querySelector("[data-start]").click();
+  entries = JSON.parse(app.local.get("ummd-log")).entries;
+  assert.deepEqual(entries.map((entry) => entry.type), ["start", "page"]);
 });
 
 test("Hub-Adresse in Version B landet auf der Startseite", () => {

@@ -60,6 +60,7 @@ test("Englisch schaltet Seitentext, die Testleiste bleibt deutsch", () => {
   assert.equal(document.querySelector("h1").textContent, "Who we are");
   assert.match(document.querySelector("main").textContent, /Sites/);
   assert.equal(document.querySelector("[data-end]").textContent, "Test beenden");
+  assert.equal(document.querySelector("[data-start]").textContent, "Test starten");
 });
 
 test("unbekannte Seite und geschlossene Moderation", () => {

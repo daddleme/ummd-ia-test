@@ -16,14 +16,7 @@ export function render(view) {
   const main = renderMain(view);
   const moderator = view.moderatorOpen ? renderModerator(view) : "";
   const langLabel = view.lang === "en" ? "Language" : "Sprache";
-  return `<div id="testbar">
-    <span>Prototyp</span>
-    <div class="segment" role="group" aria-label="Version">
-      <button type="button" data-version="a" aria-pressed="${view.version === "a"}">Version A</button>
-      <button type="button" data-version="b" aria-pressed="${view.version === "b"}">Version B</button>
-    </div>
-    <button type="button" data-end>Test beenden</button>
-  </div>
+  return `${renderTestbar(view)}
   <header>
     <div class="topline">
       <a class="logo" href="#/" data-home><strong>UMMD</strong><small>Universitätsmedizin Magdeburg</small></a>
@@ -51,6 +44,28 @@ export function render(view) {
   </header>
   <main id="page">${main}</main>
   ${moderator}`;
+}
+
+const CHEVRON_UP = `<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 8l4-4 4 4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>`;
+const CHEVRON_DOWN = `<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>`;
+
+function renderTestbar(view) {
+  if (view.testbarHidden) {
+    return `<button type="button" class="testbar-show${view.recording ? " is-recording" : ""}" data-testbar-show aria-label="Testleiste einblenden" title="Testleiste einblenden">${CHEVRON_DOWN}</button>`;
+  }
+  return `<div id="testbar">
+    <span>Prototyp</span>
+    <div class="segment" role="group" aria-label="Version">
+      <button type="button" data-version="a" aria-pressed="${view.version === "a"}">Version A</button>
+      <button type="button" data-version="b" aria-pressed="${view.version === "b"}">Version B</button>
+    </div>
+    <div class="session">
+      <span data-status${view.recording ? ' class="is-recording"' : ""}>${view.recording ? "Aufzeichnung läuft" : "Keine Aufzeichnung"}</span>
+      <button type="button" data-start${view.recording ? " disabled" : ""}>Test starten</button>
+      <button type="button" data-end${view.recording || view.log?.entries.length ? "" : " disabled"}>Test beenden</button>
+      <button type="button" class="testbar-hide" data-testbar-hide aria-label="Testleiste ausblenden" title="Testleiste ausblenden">${CHEVRON_UP}</button>
+    </div>
+  </div>`;
 }
 
 function renderMenu(area, open) {

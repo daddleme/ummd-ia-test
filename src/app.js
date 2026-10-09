@@ -7,7 +7,7 @@ import { content } from "./content.js";
 import { emptyLog, record, fileName, serialize } from "./log.js";
 import { popupOffset } from "./layout.js";
 
-const KEYS = { log: "ummd-log", version: "ummd-version", lang: "ummd-lang", moderator: "ummd-moderator" };
+const KEYS = { log: "ummd-log", recording: "ummd-recording", version: "ummd-version", lang: "ummd-lang", moderator: "ummd-moderator", testbarHidden: "ummd-testbar-hidden" };
 const CLOSE_DELAY = 250;
 
 export function mount(document, window, deps = {}) {
@@ -25,6 +25,8 @@ export function mount(document, window, deps = {}) {
     moderatorOpen: false,
     moderator: JSON.parse(session.getItem(KEYS.moderator) || "{\"participant\":\"\",\"group\":\"\",\"task\":\"\"}"),
     log: savedLog ? JSON.parse(savedLog) : emptyLog(),
+    recording: local.getItem(KEYS.recording) === "true",
+    testbarHidden: session.getItem(KEYS.testbarHidden) === "true",
     origin: "direkte Adresse",
     loggedKey: null,
     writing: false,
@@ -36,10 +38,17 @@ export function mount(document, window, deps = {}) {
     return `${buildHash(state.route)}|${query}`;
   }
 
+  function log(entry) {
+    if (!state.recording) return;
+    state.log = record(state.log, entry, now().toISOString());
+  }
+
   function persist() {
     local.setItem(KEYS.log, JSON.stringify(state.log));
+    local.setItem(KEYS.recording, String(state.recording));
     session.setItem(KEYS.version, state.version);
     session.setItem(KEYS.lang, state.lang);
+    session.setItem(KEYS.testbarHidden, String(state.testbarHidden));
     session.setItem(KEYS.moderator, JSON.stringify(state.moderator));
   }
 
@@ -121,28 +130,33 @@ export function mount(document, window, deps = {}) {
     const key = visitKey();
     if (key === state.loggedKey) return;
     state.loggedKey = key;
-    const at = now().toISOString();
     if (state.route.name === "search") {
       const hits = searchPages(state.query, state.version, state.lang) ?? [];
-      state.log = record(state.log, { type: "search", version: state.version, search: { query: state.query, count: hits.length } }, at);
+      log({ type: "search", version: state.version, search: { query: state.query, count: hits.length } });
       return;
     }
     const view = buildView(state);
     const title = view.routeName === "page" ? view.page.title : view.routeName === "missing" ? view.copy.missing : view.home.title;
-    state.log = record(state.log, {
+    log({
       type: "page",
       version: state.version,
       page: { path: buildHash(state.route), title, origin: state.origin },
-    }, at);
+    });
     state.origin = "direkte Adresse";
   }
 
   document.querySelector("#app").addEventListener("click", (event) => {
+    const toggle = event.target.closest("[data-testbar-hide], [data-testbar-show]");
+    if (toggle) {
+      state.testbarHidden = toggle.matches("[data-testbar-hide]");
+      draw();
+      return;
+    }
     const version = event.target.closest("[data-version]");
     if (version) {
       const from = state.version;
       state.version = version.dataset.version;
-      state.log = record(state.log, { type: "version", version: state.version, versionChange: { from, to: state.version } }, now().toISOString());
+      log({ type: "version", version: state.version, versionChange: { from, to: state.version } });
       state.origin = "direkte Adresse";
       writeAddress("replace");
       draw();
@@ -161,13 +175,25 @@ export function mount(document, window, deps = {}) {
         group: form.querySelector("[name=group]").value,
         task: form.querySelector("[name=task]").value,
       };
-      state.log = record(state.log, { type: "task", version: state.version, taskMark: state.moderator }, now().toISOString());
+      log({ type: "task", version: state.version, taskMark: state.moderator });
       persist();
       return;
     }
+    if (event.target.closest("[data-start]")) {
+      state.log = emptyLog();
+      state.recording = true;
+      log({ type: "start", version: state.version });
+      state.loggedKey = null;
+      state.origin = "Teststart";
+      draw();
+      return;
+    }
     if (event.target.closest("[data-end]")) {
+      log({ type: "end", version: state.version });
+      state.recording = false;
       const day = now().toISOString().slice(0, 10);
       download(fileName(state.moderator.participant, day), serialize(state.log));
+      draw();
     }
   });
 
