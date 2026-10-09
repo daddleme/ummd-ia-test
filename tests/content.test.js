@@ -48,7 +48,7 @@ test("Version B hat die freigegebenen Spalten und keine Einzelspalte", () => {
     ["Zusammenarbeit", ["infrastruktur", "kooperationen", "nachwuchs"]],
   ]);
   assert.deepEqual(columns.studium, [
-    ["Für Studieninteressierte", ["studienangebote", "bewerbung"]],
+    ["Für Studieninteressierte", ["humanmedizin", "immunologie", "neuroscience", "bewerbung"]],
     ["Für Studierende", ["moodle", "skillslab", "sp-programm"]],
     ["Für Lehrende", ["lehrangebote", "weiterbildung"]],
     ["Anlaufstellen", ["studiendekanat", "auslandsamt"]],
@@ -68,7 +68,7 @@ test("Version B hat die freigegebenen Spalten und keine Einzelspalte", () => {
 
 test("Hubs und jede verlinkte Id haben eine Seite in beiden Sprachen", () => {
   assert.deepEqual(content.hubs, {
-    studieninteressierte: ["studienangebote", "bewerbung"],
+    studieninteressierte: ["humanmedizin", "immunologie", "neuroscience", "bewerbung"],
     studierende: ["moodle", "skillslab", "sp-programm"],
     lehrende: ["lehrangebote", "weiterbildung"],
     studiendekanat: ["auslandsamt"],
@@ -88,7 +88,7 @@ test("Hubs und jede verlinkte Id haben eine Seite in beiden Sprachen", () => {
 });
 
 test("Stichworte, die kein Menüpunkt sind, stehen auf der genannten Seite", () => {
-  assert.deepEqual(content.pages.schwerpunkte.de.items, ["Schwerpunkte", "Suche Einrichtung", "beteiligte Kliniken"]);
+  assert.deepEqual(content.pages.schwerpunkte.de.items, ["Schwerpunkte", "Suche Einrichtung", "Beteiligte Kliniken"]);
   assert.deepEqual(content.pages.wir.de.items, ["Krankenversorgung", "Forschung", "Lehre", "Standorte"]);
   assert.deepEqual(content.pages.kultur.de.items, ["Leitbild", "Zusammenarbeit", "Qualität & Verantwortung"]);
   assert.ok(content.pages.bewerbung.de.items.includes("Bewerbung international"));

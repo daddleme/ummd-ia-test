@@ -19,6 +19,8 @@ export function buildView(state) {
   const routeName = target.kind === "page" ? "page" : target.kind === "missing" ? "missing" : state.route.name === "search" ? "search" : "home";
   const page = routeName === "page" ? content.pages[target.id] : null;
   const hits = routeName === "search" ? searchPages(state.query, state.version, state.lang) ?? [] : [];
+  const tileIds = page && state.version === "a" ? content.hubs[target.id] ?? [] : [];
+  const tileTitles = new Set(tileIds.map((id) => content.pages[id][state.lang].title));
   return {
     ...state,
     copy,
@@ -27,13 +29,12 @@ export function buildView(state) {
     page: page ? page[state.lang] : null,
     crumbs: page ? breadcrumbs(target.id, state.version, state.lang) : null,
     currentArea: page ? page.area : null,
-    tiles: page && state.version === "a" && content.hubs[target.id]
-      ? content.hubs[target.id].map((id) => ({
-          id,
-          label: content.pages[id][state.lang].title,
-          sentence: content.pages[id][state.lang].sentence,
-        }))
-      : [],
+    tiles: tileIds.map((id) => ({
+      id,
+      label: content.pages[id][state.lang].title,
+      sentence: content.pages[id][state.lang].sentence,
+    })),
+    sections: page ? page[state.lang].items.filter((item) => !tileTitles.has(item)) : [],
     areas: content.areas.map((area) => ({
       id: area.id,
       label: area[state.lang],

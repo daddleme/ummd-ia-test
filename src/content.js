@@ -6,6 +6,9 @@ function page(area, titleDe, sentenceDe, itemsDe, titleEn, sentenceEn, itemsEn) 
   };
 }
 
+const PROGRAMME_DE = ["Aktuelle Meldungen", "Bewerbung & Zulassung", "Studienablauf", "Alumni", "Karrierechancen", "Downloads", "Häufige Fragen", "Ansprechpartner*innen"];
+const PROGRAMME_EN = ["News", "Application & admission", "Course of study", "Alumni", "Career prospects", "Downloads", "FAQ", "Contact persons"];
+
 export const content = {
   home: {
     de: {
@@ -68,7 +71,7 @@ export const content = {
       en: "Study & teaching",
       a: ["studieninteressierte", "studierende", "lehrende", "studiendekanat"],
       b: [
-        { de: "Für Studieninteressierte", en: "For prospective students", pages: ["studienangebote", "bewerbung"] },
+        { de: "Für Studieninteressierte", en: "For prospective students", pages: ["humanmedizin", "immunologie", "neuroscience", "bewerbung"] },
         { de: "Für Studierende", en: "For students", pages: ["moodle", "skillslab", "sp-programm"] },
         { de: "Für Lehrende", en: "For teachers", pages: ["lehrangebote", "weiterbildung"] },
         { de: "Anlaufstellen", en: "Contact points", pages: ["studiendekanat", "auslandsamt"] },
@@ -96,7 +99,7 @@ export const content = {
     },
   ],
   hubs: {
-    studieninteressierte: ["studienangebote", "bewerbung"],
+    studieninteressierte: ["humanmedizin", "immunologie", "neuroscience", "bewerbung"],
     studierende: ["moodle", "skillslab", "sp-programm"],
     lehrende: ["lehrangebote", "weiterbildung"],
     studiendekanat: ["auslandsamt"],
@@ -115,7 +118,7 @@ export const content = {
     "kliniken", "versorgungszentren", "institute", "ambulanzen", "aufenthalt", "zuweisende",
     "schwerpunkte", "klinische-studien", "infrastruktur", "kooperationen", "nachwuchs",
     "studieninteressierte", "studierende", "lehrende", "studiendekanat",
-    "studienangebote", "bewerbung", "moodle", "skillslab", "sp-programm",
+    "humanmedizin", "immunologie", "neuroscience", "bewerbung", "moodle", "skillslab", "sp-programm",
     "lehrangebote", "weiterbildung", "auslandsamt",
     "stellenangebote", "berufungsverfahren", "ausbildung", "fortbildung", "benefits",
     "wir", "leitung", "einrichtungen", "kultur", "presse",
@@ -129,32 +132,34 @@ export const content = {
     institute: page("behandlung", "Institute", "Die Institute der Medizinischen Fakultät.", ["Institutsübersicht", "Forschung an den Instituten", "Kontakt"], "Institutes", "The institutes of the Medical Faculty.", ["Institute overview", "Research at the institutes", "Contact"]),
     ambulanzen: page("behandlung", "Ambulanzen", "Ambulante Behandlung an der UMMD.", ["Ambulanzübersicht", "Sprechstunden", "Anmeldung"], "Outpatient clinics", "Outpatient care at UMMD.", ["Outpatient clinic overview", "Consultation hours", "Registration"]),
     aufenthalt: page("behandlung", "Aufenthalt & Besuch", "Informationen für den Aufenthalt und für Besuche.", ["Besuchszeiten", "Übernachtung", "Service vor Ort"], "Stay & visit", "Information for a stay and for visits.", ["Visiting hours", "Overnight stay", "On-site services"]),
-    zuweisende: page("behandlung", "Für Zuweisende", "Zugang für zuweisende Ärztinnen und Ärzte.", ["Zuweisung", "Einweisung", "Kontakt"], "For referring physicians", "Access for referring physicians.", ["Referral", "Admission", "Contact"]),
-    schwerpunkte: page("forschung", "Forschungsschwerpunkte", "Die wissenschaftlichen Schwerpunkte der UMMD.", ["Schwerpunkte", "Suche Einrichtung", "beteiligte Kliniken"], "Research focus areas", "The scientific focus areas of UMMD.", ["Focus areas", "Find a facility", "Participating clinics"]),
+    zuweisende: page("behandlung", "Für Zuweisende", "Zugang für zuweisende Ärztinnen und Ärzte.", ["Benötigte Unterlagen", "Checkliste für den Aufenthalt", "Anfahrt & Wegweiser", "Kontakt & Ansprechpartner"], "For referring physicians", "Access for referring physicians.", ["Required documents", "Checklist for the stay", "Directions & wayfinding", "Contact persons"]),
+    schwerpunkte: page("forschung", "Forschungsschwerpunkte", "Die wissenschaftlichen Schwerpunkte der UMMD.", ["Schwerpunkte", "Suche Einrichtung", "Beteiligte Kliniken"], "Research focus areas", "The scientific focus areas of UMMD.", ["Focus areas", "Find a facility", "Participating clinics"]),
     "klinische-studien": page("forschung", "Klinische Studien", "Studien, an denen die UMMD beteiligt ist.", ["Laufende Studien", "Teilnahme", "Kontakt"], "Clinical studies", "Studies that UMMD takes part in.", ["Current studies", "Participation", "Contact"]),
     infrastruktur: page("forschung", "Forschungsinfrastruktur", "Geräte und Einrichtungen für die Forschung.", ["Zentrale Forschungsplattformen", "Großgeräte", "Nutzung"], "Research infrastructure", "Equipment and facilities for research.", ["Central research platforms", "Large equipment", "Use"]),
     kooperationen: page("forschung", "Kooperationen", "Partner in Forschung und Versorgung.", ["Verbünde", "Partner", "Ansprechpartner"], "Cooperations", "Partners in research and care.", ["Networks", "Partners", "Contacts"]),
     nachwuchs: page("forschung", "Nachwuchsförderung", "Wege in die wissenschaftliche Karriere.", ["Promotion", "Programme", "Beratung"], "Early career support", "Paths into a scientific career.", ["Doctorate", "Programs", "Advice"]),
-    studieninteressierte: page("studium", "Für Studieninteressierte", "Einstieg für Menschen, die an der UMMD studieren wollen.", ["Studienangebote", "Bewerbung"], "For prospective students", "Starting point for people who want to study at UMMD.", ["Study programs", "Application"]),
+    studieninteressierte: page("studium", "Für Studieninteressierte", "Einstieg für Menschen, die an der UMMD studieren wollen.", ["Humanmedizin (Staatsexamen)", "Immunologie (M.Sc.)", "Integrative Neuroscience (M.Sc.)", "Bewerbungsprozess"], "For prospective students", "Starting point for people who want to study at UMMD.", ["Human Medicine (State Examination)", "Immunology (M.Sc.)", "Integrative Neuroscience (M.Sc.)", "Application process"]),
     studierende: page("studium", "Für Studierende", "Einstieg für eingeschriebene Studierende.", ["Moodle", "Skillslab", "SP-Programm", "PJ", "Fachschaftsrat"], "For students", "Starting point for enrolled students.", ["Moodle", "Skillslab", "SP program", "PJ", "Student council"]),
     lehrende: page("studium", "Für Lehrende", "Einstieg für Lehrende der UMMD.", ["Lehrangebote", "Weiterbildung"], "For teachers", "Starting point for teachers at UMMD.", ["Teaching offers", "Continuing education"]),
     studiendekanat: page("studium", "Studiendekanat", "Anlaufstelle für Studium und Lehre.", ["Ansprechpartner", "Akademisches Auslandsamt"], "Dean of Studies office", "Contact point for study and teaching.", ["Contacts", "International Office"]),
-    studienangebote: page("studium", "Studienangebote", "Welche Studiengänge die UMMD anbietet.", ["Studiengänge", "Abschlüsse", "Voraussetzungen"], "Study programs", "Which degree programs UMMD offers.", ["Degree programs", "Degrees", "Requirements"]),
-    bewerbung: page("studium", "Bewerbung", "So bewerben Sie sich um einen Studienplatz.", ["Fristen", "Voraussetzungen", "Bewerbung international"], "Application", "How to apply for a place to study.", ["Deadlines", "Requirements", "International application"]),
+    humanmedizin: page("studium", "Humanmedizin (Staatsexamen)", "Das Studium der Humanmedizin an der UMMD.", PROGRAMME_DE, "Human Medicine (State Examination)", "Studying human medicine at UMMD.", PROGRAMME_EN),
+    immunologie: page("studium", "Immunologie (M.Sc.)", "Der Masterstudiengang Immunologie.", PROGRAMME_DE, "Immunology (M.Sc.)", "The master's program in immunology.", PROGRAMME_EN),
+    neuroscience: page("studium", "Integrative Neuroscience (M.Sc.)", "Der Masterstudiengang Integrative Neuroscience.", PROGRAMME_DE, "Integrative Neuroscience (M.Sc.)", "The master's program in integrative neuroscience.", PROGRAMME_EN),
+    bewerbung: page("studium", "Bewerbungsprozess", "So bewerben Sie sich um einen Studienplatz.", ["Fristen", "Voraussetzungen", "Bewerbung international"], "Application process", "How to apply for a place to study.", ["Deadlines", "Requirements", "International application"]),
     moodle: page("studium", "Moodle", "Die Lernplattform für Studierende.", ["Zugang", "Kurse", "PJ", "Fachschaftsrat"], "Moodle", "The learning platform for students.", ["Access", "Courses", "PJ", "Student council"]),
     skillslab: page("studium", "Skillslab", "Üben praktischer Fertigkeiten.", ["Kurse", "Räume", "PJ", "Fachschaftsrat"], "Skillslab", "Practice for clinical skills.", ["Courses", "Rooms", "PJ", "Student council"]),
     "sp-programm": page("studium", "SP-Programm", "Das Studienprogramm SP.", ["Aufbau", "Anmeldung", "PJ", "Fachschaftsrat"], "SP program", "The SP study program.", ["Structure", "Registration", "PJ", "Student council"]),
     lehrangebote: page("studium", "Lehrangebote", "Lehre an der UMMD für Dozierende.", ["Lehrveranstaltungen", "Materialien", "Ansprechpartner"], "Teaching offers", "Teaching at UMMD for lecturers.", ["Courses", "Materials", "Contacts"]),
     weiterbildung: page("studium", "Weiterbildung", "Weiterbildung für Lehrende.", ["Medizindidaktik", "Kurse", "Anmeldung"], "Continuing education", "Continuing education for teachers.", ["Medical didactics", "Courses", "Registration"]),
     auslandsamt: page("studium", "Akademisches Auslandsamt", "Studium mit internationalem Bezug.", ["Auslandsaufenthalt", "Studierende aus dem Ausland", "Bewerbung international"], "International Office", "Study with an international dimension.", ["Stay abroad", "Students from abroad", "International application"]),
-    stellenangebote: page("karriere", "Stellenangebote", "Offene Stellen an der UMMD.", ["Aktuelle Stellen", "Bewerbung auf eine Stelle", "Kontakt"], "Job openings", "Open positions at UMMD.", ["Current positions", "Apply for a position", "Contact"]),
+    stellenangebote: page("karriere", "Stellenangebote", "Offene Stellen an der UMMD.", ["Pflege- und Funktionsdienst", "Therapie & Soziales", "Ärztliches Personal", "Forschung & Wissenschaft", "Verwaltung, IT & Management", "Medizinischer (technischer) Dienst", "Dienstleistung, Reinigung & Catering", "Studierendenjobs"], "Job openings", "Open positions at UMMD.", ["Nursing & functional services", "Therapy & social services", "Medical staff", "Research & science", "Administration, IT & management", "Medical (technical) services", "Services, cleaning & catering", "Student jobs"]),
     berufungsverfahren: page("karriere", "Berufungsverfahren", "Verfahren für Professuren.", ["Laufende Verfahren", "Ablauf", "Kontakt"], "Appointment procedures", "Procedures for professorships.", ["Current procedures", "Process", "Contact"]),
-    ausbildung: page("karriere", "Ausbildung", "Ausbildung an der UMMD.", ["Berufe", "freie Plätze", "Bewerbung"], "Vocational training", "Vocational training at UMMD.", ["Occupations", "Open places", "Application"]),
+    ausbildung: page("karriere", "Ausbildung", "Ausbildung an der UMMD.", ["Berufe", "Freie Plätze", "Bewerbung"], "Vocational training", "Vocational training at UMMD.", ["Occupations", "Open places", "Application"]),
     fortbildung: page("karriere", "Fort- und Weiterbildung", "Fortbildung für Beschäftigte.", ["Programm", "Anmeldung", "Zertifikate"], "Staff training", "Continuing education for staff.", ["Program", "Registration", "Certificates"]),
     benefits: page("karriere", "Benefits", "Was die UMMD als Arbeitgeberin bietet.", ["Arbeitsbedingungen", "Familie", "Entwicklung"], "Benefits", "What UMMD offers as an employer.", ["Working conditions", "Family", "Development"]),
     wir: page("ueber", "Wer wir sind", "Auftrag und Aufbau der UMMD.", ["Krankenversorgung", "Forschung", "Lehre", "Standorte"], "Who we are", "Mission and structure of UMMD.", ["Patient care", "Research", "Teaching", "Sites"]),
     leitung: page("ueber", "Leitungsvorstand", "Die Leitung der UMMD.", ["Mitglieder", "Aufgaben", "Kontakt"], "Executive board", "The leadership of UMMD.", ["Members", "Responsibilities", "Contact"]),
-    einrichtungen: page("ueber", "Einrichtungen", "Einrichtungen unter dem Dach der UMMD.", ["Fakultät", "Klinikum", "weitere Einrichtungen"], "Institutions", "Institutions under the UMMD umbrella.", ["Faculty", "University hospital", "Other institutions"]),
+    einrichtungen: page("ueber", "Einrichtungen", "Einrichtungen unter dem Dach der UMMD.", ["Fakultät", "Klinikum", "Weitere Einrichtungen"], "Institutions", "Institutions under the UMMD umbrella.", ["Faculty", "University hospital", "Other institutions"]),
     kultur: page("ueber", "Kultur & Werte", "Wofür die UMMD steht.", ["Leitbild", "Zusammenarbeit", "Qualität & Verantwortung"], "Culture & values", "What UMMD stands for.", ["Mission statement", "Collaboration", "Quality & responsibility"]),
     presse: page("ueber", "Presse & Aktuelles", "Neuigkeiten und Pressekontakt.", ["Meldungen", "Pressekontakt", "Bildmaterial"], "Press & news", "News and press contact.", ["News", "Press contact", "Images"]),
   },

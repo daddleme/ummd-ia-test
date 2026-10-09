@@ -98,11 +98,12 @@ function renderMain(view) {
     return view.hits.map((hit) => `<article data-result="${escapeHtml(hit.id)}"><h2><a href="#/p/${escapeHtml(hit.id)}" data-page="${escapeHtml(hit.id)}" data-origin="Suche">${escapeHtml(hit.title)}</a></h2><p>${escapeHtml(hit.area)}</p><p>${escapeHtml(hit.sentence)}</p></article>`).join("");
   }
   if (view.routeName === "home") {
-    return `${renderHero(view.home.title, "")}<div class="sk-grid">${[1, 2, 3].map(() => renderCard("")).join("")}</div>${SKELETON_BAND}`;
+    return `${renderHero(view.home.title, "")}<div class="sk-grid">${[1, 2, 3, 4].map(() => renderCard("")).join("")}</div>${SKELETON_BAND}`;
   }
   const tiles = view.tiles.map((tile) => `<a class="tile" href="#/p/${escapeHtml(tile.id)}" data-page="${escapeHtml(tile.id)}" data-origin="Kachel"><strong>${escapeHtml(tile.label)}</strong><span class="sk" aria-hidden="true"></span><span class="sk sk-short" aria-hidden="true"></span></a>`).join("");
-  const cards = view.page.items.map((item) => renderCard(item)).join("");
-  return `${renderHero(view.page.title, renderCrumbs(view))}${tiles ? `<div class="tiles">${tiles}</div>` : ""}<h2>${escapeHtml(view.copy.onThisPage)}</h2><div class="sk-grid">${cards}</div>${SKELETON_BAND}`;
+  const cards = view.sections.map((item) => renderCard(item)).join("");
+  const sections = cards ? `<h2>${escapeHtml(view.copy.onThisPage)}</h2><div class="sk-grid">${cards}</div>` : "";
+  return `${renderHero(view.page.title, renderCrumbs(view))}${tiles ? `<div class="tiles">${tiles}</div>` : ""}${sections}${SKELETON_BAND}`;
 }
 
 const SKELETON_BAND = `<section class="sk-band" aria-hidden="true">
