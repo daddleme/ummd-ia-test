@@ -4,9 +4,10 @@ import { render } from "./render.js";
 import { parseRoute, buildHash, parseQuery, buildQuery } from "./router.js";
 import { searchPages } from "./search.js";
 import { content } from "./content.js";
-import { emptyLog, record, fileName, serialize } from "./log.js";
+import { emptyLog, record, fileName, fileStamp, serialize } from "./log.js";
 import { popupOffset } from "./layout.js";
 import { hiddenInVersion } from "./pages.js";
+import { hoverTarget, HOVER_MIN_MS } from "./hover.js";
 
 const KEYS = { log: "ummd-log", recording: "ummd-recording", version: "ummd-version", lang: "ummd-lang", moderator: "ummd-moderator", testbarHidden: "ummd-testbar-hidden" };
 const CLOSE_DELAY = 250;
@@ -34,15 +35,46 @@ export function mount(document, window, deps = {}) {
     writing: false,
   };
   let closeTimer = null;
+  let hovered = null;
+  let restingOn = null;
 
   function visitKey() {
     const query = state.route.name === "search" ? state.query : "";
     return `${buildHash(state.route)}|${query}`;
   }
 
-  function log(entry) {
+  function log(entry, at = now().toISOString()) {
     if (!state.recording) return;
-    state.log = record(state.log, entry, now().toISOString());
+    state.log = record(state.log, entry, at);
+  }
+
+  function endHover(clicked = false) {
+    if (!hovered) return;
+    const { target, startedAt } = hovered;
+    hovered = null;
+    const ms = now() - startedAt;
+    if (clicked) restingOn = hoverKey(target);
+    if (ms < HOVER_MIN_MS && !clicked) return;
+    const hover = { element: target.element, bereich: target.bereich, sekunden: Math.round(ms / 100) / 10, geklickt: clicked };
+    log({ type: "hover", version: state.version, hover }, startedAt.toISOString());
+    persist();
+  }
+
+  function trackHover(node) {
+    const target = state.recording ? hoverTarget(node) : null;
+    if (target?.node === hovered?.target.node) return;
+    endHover();
+    if (target && hoverKey(target) === restingOn) return;
+    restingOn = null;
+    if (target) hovered = { target, startedAt: now() };
+  }
+
+  function hoverKey(target) {
+    return `${target.bereich}|${target.element}`;
+  }
+
+  function endHoverOn(node) {
+    endHover(Boolean(hovered) && hoverTarget(node)?.node === hovered.target.node);
   }
 
   function persist() {
@@ -77,6 +109,7 @@ export function mount(document, window, deps = {}) {
   }
 
   function draw() {
+    endHover();
     if (state.route.name === "page" && hiddenInVersion(state.route.id, state.version)) {
       state.route = { name: "home" };
       writeAddress("replace");
@@ -155,6 +188,7 @@ export function mount(document, window, deps = {}) {
   }
 
   document.querySelector("#app").addEventListener("click", (event) => {
+    endHoverOn(event.target);
     const toggle = event.target.closest("[data-testbar-hide], [data-testbar-show]");
     if (toggle) {
       state.testbarHidden = toggle.matches("[data-testbar-hide]");
@@ -204,19 +238,22 @@ export function mount(document, window, deps = {}) {
       log({ type: "start", version: state.version });
       state.loggedKey = null;
       state.origin = "Teststart";
+      state.route = { name: "home" };
+      state.openArea = null;
+      writeAddress("push");
       draw();
       return;
     }
     if (event.target.closest("[data-end]")) {
       log({ type: "end", version: state.version });
       state.recording = false;
-      const day = now().toISOString().slice(0, 10);
-      download(fileName(state.moderator.participant, day), serialize(state.log));
+      download(fileName(state.moderator.participant, fileStamp(now())), serialize(state.log));
       draw();
     }
   });
 
   document.querySelector("#app").addEventListener("submit", (event) => {
+    endHoverOn(event.target);
     if (event.target.matches("[data-finder-form]")) {
       event.preventDefault();
       const query = event.target.querySelector("[data-finder]").value.trim();
@@ -233,12 +270,14 @@ export function mount(document, window, deps = {}) {
   });
 
   document.querySelector("#app").addEventListener("mouseover", (event) => {
+    trackHover(event.target);
     const area = event.target.closest("[data-area]");
     if (area) openMenu(area.dataset.area);
     else if (event.target.closest(".navwrap")) clearTimeout(closeTimer);
   });
 
   document.querySelector("#app").addEventListener("mouseout", (event) => {
+    if (!event.relatedTarget) endHover();
     if (!event.target.closest(".navwrap")) return;
     if (event.relatedTarget && event.relatedTarget.closest && event.relatedTarget.closest(".navwrap")) return;
     clearTimeout(closeTimer);

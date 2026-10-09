@@ -6,9 +6,10 @@ function escapeHtml(value) {
     .replaceAll('"', "&quot;");
 }
 
-function pageLink(id, label, extraClass = "") {
+function pageLink(id, label, extraClass = "", origin = "") {
   const cls = extraClass ? ` class="${extraClass}"` : "";
-  return `<a href="#/p/${escapeHtml(id)}" data-page="${escapeHtml(id)}"${cls}>${escapeHtml(label)}</a>`;
+  const from = origin ? ` data-origin="${escapeHtml(origin)}"` : "";
+  return `<a href="#/p/${escapeHtml(id)}" data-page="${escapeHtml(id)}"${cls}${from}>${escapeHtml(label)}</a>`;
 }
 
 export function render(view) {
@@ -29,9 +30,9 @@ export function render(view) {
           <input data-search aria-label="${escapeHtml(view.copy.searchLabel)}" placeholder="${escapeHtml(view.copy.searchLabel)}" value="${escapeHtml(view.routeName === "search" ? view.query : "")}">
           <button type="submit" aria-label="${escapeHtml(view.copy.searchButton)}" title="${escapeHtml(view.copy.searchButton)}">${ARROW_RIGHT}</button>
         </form>
-        ${pageLink("anfahrt", view.level1[2].label, "quiet")}
-        ${pageLink("kontakt", view.level1[1].label, "quiet")}
-        ${pageLink("notfall", view.level1[0].label, "is-emergency")}
+        ${pageLink("anfahrt", view.level1[2].label, "quiet", "Kopfzeile")}
+        ${pageLink("kontakt", view.level1[1].label, "quiet", "Kopfzeile")}
+        ${pageLink("notfall", view.level1[0].label, "is-emergency", "Kopfzeile")}
         <div class="langswitch">
           <button type="button" data-lang-toggle aria-haspopup="true" aria-expanded="${Boolean(view.langOpen)}" aria-label="${escapeHtml(langLabel)}" title="${escapeHtml(langLabel)}">${GLOBE_ICON}<span>${view.lang.toUpperCase()}</span>${CHEVRON_DOWN}</button>
           <div class="langmenu" data-lang-menu${view.langOpen ? "" : " hidden"}>

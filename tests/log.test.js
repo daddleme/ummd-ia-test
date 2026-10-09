@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { emptyLog, record, fileName, serialize } from "../src/log.js";
+import { emptyLog, record, fileName, fileStamp, serialize } from "../src/log.js";
 
 test("Seitenaufruf übernimmt die geltende Aufgabenmarke", () => {
   let log = emptyLog();
@@ -29,6 +29,7 @@ test("vor der ersten Marke ist die Aufgabe null", () => {
 });
 
 test("Dateiname und JSON", () => {
+  assert.equal(fileStamp(new Date(2026, 9, 8, 15, 4, 7)), "2026-10-08_15-04-07");
   assert.equal(fileName("", "2026-10-08"), "ummd-protokoll-unbenannt-2026-10-08.json");
   assert.equal(fileName("Ada L.", "2026-10-08"), "ummd-protokoll-Ada-L--2026-10-08.json");
   const log = record(emptyLog(), {

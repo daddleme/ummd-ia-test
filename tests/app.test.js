@@ -99,7 +99,7 @@ test("Suche, Sprache, Marke und Download", () => {
   app.document.querySelector("[data-mark]").click();
   app.document.querySelector("[data-result='moodle'] a").click();
   app.document.querySelector("[data-end]").click();
-  assert.equal(app.downloads[0].name, "ummd-protokoll-Ada-L--2026-10-08.json");
+  assert.match(app.downloads[0].name, /^ummd-protokoll-Ada-L--2026-10-08_\d{2}-00-00\.json$/);
   const saved = JSON.parse(app.downloads[0].text);
   assert.ok(saved.entries.some((entry) => entry.type === "search" && entry.search.query === "Fachschaft"));
   assert.ok(saved.entries.some((entry) => entry.type === "page" && entry.page.origin === "Suche"));
@@ -117,7 +117,7 @@ test("Aufzeichnung läuft nur zwischen Test starten und Test beenden", () => {
   assert.match(app.document.querySelector("[data-status]").textContent, /Aufzeichnung läuft/);
   let entries = JSON.parse(app.local.get("ummd-log")).entries;
   assert.deepEqual(entries.map((entry) => entry.type), ["start", "page"]);
-  assert.equal(entries[1].page.origin, "Teststart");
+  assert.deepEqual(entries[1].page, { path: "#/", title: "Universitätsmedizin Magdeburg", origin: "Teststart" });
 
   app.document.querySelector("[data-page='studierende']").click();
   app.document.querySelector("[data-end]").click();
@@ -133,6 +133,39 @@ test("Aufzeichnung läuft nur zwischen Test starten und Test beenden", () => {
   app.document.querySelector("[data-start]").click();
   entries = JSON.parse(app.local.get("ummd-log")).entries;
   assert.deepEqual(entries.map((entry) => entry.type), ["start", "page"]);
+});
+
+test("Maus über klickbaren Elementen wird ab 0,3 Sekunden aufgezeichnet", () => {
+  const app = start("#/", "?v=b");
+  app.document.querySelector("[data-start]").click();
+  const nav = app.document.querySelector("[data-area='behandlung']");
+  hover(app, "mouseover", nav);
+  app.setTime("2026-10-08T14:00:01.200Z");
+  const link = app.document.querySelector("[data-menu='behandlung'] [data-page='institute']");
+  hover(app, "mouseover", link);
+  app.setTime("2026-10-08T14:00:01.400Z");
+  const target = app.document.querySelector("[data-menu='behandlung'] [data-page='kliniken']");
+  hover(app, "mouseover", target);
+  app.setTime("2026-10-08T14:00:02.000Z");
+  target.click();
+  hover(app, "mouseover", app.document.querySelector("[data-menu='behandlung'] [data-page='kliniken']"));
+  app.setTime("2026-10-08T14:00:03.000Z");
+  const kontakt = app.document.querySelector("[data-page='kontakt']");
+  hover(app, "mouseover", kontakt);
+  app.setTime("2026-10-08T14:00:03.100Z");
+  kontakt.click();
+  app.document.querySelector("[data-end]").click();
+
+  const saved = JSON.parse(app.downloads[0].text);
+  const hovers = saved.entries.filter((entry) => entry.type === "hover").map((entry) => entry.hover);
+  assert.deepEqual(hovers, [
+    { element: "Behandlung & Aufenthalt", bereich: "Hauptmenü", sekunden: 1.2, geklickt: false },
+    { element: "Kliniken", bereich: "Mega-Menü", sekunden: 0.6, geklickt: true },
+    { element: "Kontakt", bereich: "Kopfzeile", sekunden: 0.1, geklickt: true },
+  ]);
+  assert.equal(saved.entries.at(-2).page.origin, "Kopfzeile");
+  assert.deepEqual(saved.paths[0].schritte.map((item) => item.seite), ["Startseite", "Kliniken", "Kontakt"]);
+  assert.equal(saved.paths[0].schritte[1].mausVorher.length, 2);
 });
 
 test("Hub-Adresse in Version B landet auf der Startseite", () => {
