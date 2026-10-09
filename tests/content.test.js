@@ -97,7 +97,7 @@ test("Synonyme zeigen auf vorhandene Seiten", () => {
     { terms: ["fachschaft", "fachschaftsrat"], page: "moodle" },
     { terms: ["pj", "praktisches jahr"], page: "moodle" },
     { terms: ["international", "ausland"], page: "bewerbung" },
-    { terms: ["anfahrt", "parken", "adresse"], page: "kontakt" },
+    { terms: ["anfahrt", "parken", "adresse"], page: "anfahrt" },
     { terms: ["zuweisung", "einweisung"], page: "zuweisende" },
     { terms: ["jobs", "stellen"], page: "stellenangebote" },
   ]);

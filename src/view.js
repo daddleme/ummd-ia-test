@@ -32,6 +32,7 @@ export function buildView(state) {
     level1: [
       { id: "notfall", label: content.pages.notfall[state.lang].title, emergency: true },
       { id: "kontakt", label: content.pages.kontakt[state.lang].title, emergency: false },
+      { id: "anfahrt", label: content.pages.anfahrt[state.lang].title, emergency: false },
     ],
     home: content.home[state.lang],
     hits: hits.map((id) => ({

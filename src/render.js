@@ -19,33 +19,45 @@ export function render(view) {
   return `${renderTestbar(view)}
   <header>
     <div class="topline">
-      <a class="logo" href="#/" data-home><strong>UMMD</strong><small>Universitätsmedizin Magdeburg</small></a>
+      <a class="logo" href="#/" data-home>
+        <span class="logo-mark" aria-hidden="true"></span>
+        <span class="logo-text"><strong>UMMD</strong><small>Universitätsmedizin Magdeburg</small></span>
+      </a>
       <div class="tools">
-        ${pageLink("notfall", view.level1[0].label, "is-emergency")}
-        <form data-search-form>
+        <form data-search-form role="search">
+          ${SEARCH_ICON}
           <input data-search aria-label="${escapeHtml(view.copy.searchLabel)}" placeholder="${escapeHtml(view.copy.searchLabel)}" value="${escapeHtml(view.routeName === "search" ? view.query : "")}">
-          <button type="submit">${escapeHtml(view.copy.searchButton)}</button>
+          <button type="submit" aria-label="${escapeHtml(view.copy.searchButton)}" title="${escapeHtml(view.copy.searchButton)}">${ARROW_RIGHT}</button>
         </form>
+        ${pageLink("anfahrt", view.level1[2].label, "quiet")}
         ${pageLink("kontakt", view.level1[1].label, "quiet")}
-        <label class="lang">${escapeHtml(langLabel)}
-          <select data-lang-select aria-label="${escapeHtml(langLabel)}">
-            <option value="de" ${view.lang === "de" ? "selected" : ""}>Deutsch</option>
-            <option value="en" ${view.lang === "en" ? "selected" : ""}>English</option>
-          </select>
-        </label>
+        ${pageLink("notfall", view.level1[0].label, "is-emergency")}
+        <div class="langswitch">
+          <button type="button" data-lang-toggle aria-haspopup="true" aria-expanded="${Boolean(view.langOpen)}" aria-label="${escapeHtml(langLabel)}" title="${escapeHtml(langLabel)}">${GLOBE_ICON}<span>${view.lang.toUpperCase()}</span>${CHEVRON_DOWN}</button>
+          <div class="langmenu" data-lang-menu${view.langOpen ? "" : " hidden"}>
+            ${LANGUAGES.map((item) => `<button type="button" data-lang="${item.id}" aria-pressed="${view.lang === item.id}">${item.label}</button>`).join("")}
+          </div>
+        </div>
       </div>
     </div>
-    <div class="navwrap">
+    <div class="navrow"><div class="navwrap">
       <nav>
-        ${view.areas.map((area) => `<button type="button" data-area="${area.id}" aria-expanded="${view.openArea === area.id}"${view.currentArea === area.id ? ' aria-current="true"' : ""}>${escapeHtml(area.label)}</button>`).join("")}
+        ${view.areas.map((area) => `<button type="button" data-area="${area.id}" aria-expanded="${view.openArea === area.id}"${view.currentArea === area.id ? ' aria-current="true"' : ""}>${escapeHtml(area.label)}${CHEVRON_DOWN}</button>`).join("")}
       </nav>
       ${menus}
-    </div>
+    </div></div>
   </header>
   <main id="page">${main}</main>
   ${moderator}`;
 }
 
+const SEARCH_ICON = `<svg class="search-icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
+const ARROW_RIGHT = `<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const GLOBE_ICON = `<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6.3"/><ellipse cx="8" cy="8" rx="2.6" ry="6.3"/><path d="M1.9 6h12.2M1.9 10h12.2"/></g></svg>`;
+const LANGUAGES = [
+  { id: "de", label: "Deutsch" },
+  { id: "en", label: "English" },
+];
 const CHEVRON_UP = `<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 8l4-4 4 4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>`;
 const CHEVRON_DOWN = `<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>`;
 

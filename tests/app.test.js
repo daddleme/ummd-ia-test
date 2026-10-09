@@ -87,9 +87,10 @@ test("Suche, Sprache, Marke und Download", () => {
   app.document.querySelector("[data-search]").value = "Fachschaft";
   app.document.querySelector("[data-search-form]").dispatchEvent(new app.window.Event("submit", { bubbles: true, cancelable: true }));
   assert.ok(app.document.querySelector("[data-result='moodle']"));
-  const language = app.document.querySelector("[data-lang-select]");
-  language.querySelector("[value=en]").selected = true;
-  language.dispatchEvent(new app.window.Event("change", { bubbles: true }));
+  app.document.querySelector("[data-lang-toggle]").click();
+  assert.equal(app.document.querySelector("[data-lang-menu]").hidden, false);
+  app.document.querySelector("[data-lang='en']").click();
+  assert.equal(app.document.querySelector("[data-lang-toggle]").textContent, "EN");
   assert.match(app.document.querySelector("[data-result='moodle']").textContent, /learning platform/i);
   app.window.dispatchEvent(Object.assign(new app.window.Event("keydown"), { key: "M", shiftKey: true }));
   app.document.querySelector("[name='participant']").value = "Ada L.";
@@ -118,7 +119,7 @@ test("Aufzeichnung läuft nur zwischen Test starten und Test beenden", () => {
   assert.deepEqual(entries.map((entry) => entry.type), ["start", "page"]);
   assert.equal(entries[1].page.origin, "Teststart");
 
-  app.document.querySelector("[data-page='moodle']").click();
+  app.document.querySelector("[data-page='studierende']").click();
   app.document.querySelector("[data-end]").click();
   const saved = JSON.parse(app.downloads[0].text);
   assert.deepEqual(saved.entries.map((entry) => entry.type), ["start", "page", "page", "end"]);

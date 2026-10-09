@@ -27,6 +27,7 @@ export function mount(document, window, deps = {}) {
     log: savedLog ? JSON.parse(savedLog) : emptyLog(),
     recording: local.getItem(KEYS.recording) === "true",
     testbarHidden: session.getItem(KEYS.testbarHidden) === "true",
+    langOpen: false,
     origin: "direkte Adresse",
     loggedKey: null,
     writing: false,
@@ -104,6 +105,13 @@ export function mount(document, window, deps = {}) {
     showMenu();
   }
 
+  function setLangOpen(open) {
+    state.langOpen = open;
+    const menu = document.querySelector("[data-lang-menu]");
+    if (menu) menu.hidden = !open;
+    document.querySelector("[data-lang-toggle]")?.setAttribute("aria-expanded", String(open));
+  }
+
   function showMenu() {
     document.querySelectorAll("[data-menu]").forEach((menu) => { menu.hidden = menu.dataset.menu !== state.openArea; });
     document.querySelectorAll("[data-area]").forEach((button) => button.setAttribute("aria-expanded", String(button.dataset.area === state.openArea)));
@@ -152,6 +160,15 @@ export function mount(document, window, deps = {}) {
       draw();
       return;
     }
+    if (event.target.closest("[data-lang-toggle]")) { setLangOpen(!state.langOpen); return; }
+    const lang = event.target.closest("[data-lang]");
+    if (lang) {
+      state.lang = lang.dataset.lang === "en" ? "en" : "de";
+      state.langOpen = false;
+      draw();
+      return;
+    }
+    if (state.langOpen) setLangOpen(false);
     const version = event.target.closest("[data-version]");
     if (version) {
       const from = state.version;
@@ -197,12 +214,6 @@ export function mount(document, window, deps = {}) {
     }
   });
 
-  document.querySelector("#app").addEventListener("change", (event) => {
-    if (!event.target.matches("[data-lang-select]")) return;
-    state.lang = event.target.value === "en" ? "en" : "de";
-    draw();
-  });
-
   document.querySelector("#app").addEventListener("submit", (event) => {
     if (!event.target.matches("[data-search-form]")) return;
     event.preventDefault();
@@ -226,7 +237,7 @@ export function mount(document, window, deps = {}) {
   });
 
   window.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") { closeMenu(); return; }
+    if (event.key === "Escape") { closeMenu(); setLangOpen(false); return; }
     if (!(event.key === "M" && event.shiftKey)) return;
     state.moderatorOpen = !state.moderatorOpen;
     draw();
